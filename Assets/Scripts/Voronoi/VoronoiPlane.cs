@@ -107,7 +107,14 @@ public class VoronoiPlane
 
     private int GetIndex(int i, int j)
     {
-        return (i * planeWidth) + j;
+        if (planeWidth > planeHeight)
+        {
+            return (i * planeHeight) + j;
+        }
+        else
+        {
+            return i + (j * planeWidth);
+        }
     }
     
     private Vector2 GetRandomCenter(int i, int j)

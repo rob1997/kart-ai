@@ -351,8 +351,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   voronoiPlane:
-    planeWidth: 10
-    planeHeight: 10
+    planeWidth: 5
+    planeHeight: 5
     cellSize: 5
     padding: 1
     drawGizmos: 1

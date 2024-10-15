@@ -21,7 +21,7 @@ public class Draw : MonoBehaviour
     {
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-            StartCoroutine(DrawPlane(100));
+            StartCoroutine(DrawPlane(1));
         }
     }
 
