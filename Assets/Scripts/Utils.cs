@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public static class Utilities
+public static class Utils
 {
     public static float BiDirectionalNormalizedClamp(this float value)
     {
