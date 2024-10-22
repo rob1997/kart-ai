@@ -4,11 +4,11 @@ namespace Voronoi
 {
     public struct Intersection
     {
-        public Vector2 Point { get; private set; }
+        public Vector3 Point { get; private set; }
 
         public Segment Segment { get; private set; }
 
-        public Intersection(Vector2 point, Segment segment)
+        public Intersection(Vector3 point, Segment segment)
         {
             Point = point;
 

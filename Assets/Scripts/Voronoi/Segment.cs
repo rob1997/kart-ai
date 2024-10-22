@@ -4,16 +4,14 @@ namespace Voronoi
 {
     public struct Segment
     {
-        public Vector2 Start { get; private set; }
-        public Vector2 End { get; private set; }
+        public Vector3 Start { get; private set; }
+        public Vector3 End { get; private set; }
 
-        public Vector2 AsVector2 => End - Start;
+        public Vector3 Direction => End - Start;
 
-        public Vector2 AsVector3 => new Vector3(AsVector2.x, AsVector2.y, 0f);
+        public Vector3 Center { get; private set; }
 
-        public Vector2 Center { get; private set; }
-
-        public Segment(Vector2 start, Vector2 end)
+        public Segment(Vector3 start, Vector3 end)
         {
             Start = start;
 

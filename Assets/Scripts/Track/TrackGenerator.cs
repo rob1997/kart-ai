@@ -13,7 +13,7 @@ namespace Track
         {
             if (Keyboard.current.spaceKey.wasPressedThisFrame)
             {
-                VoronoiPlane.Generate();
+                VoronoiPlane.Generate(transform.position, transform.up);
             }
         }
     }

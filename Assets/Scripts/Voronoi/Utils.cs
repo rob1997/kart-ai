@@ -10,11 +10,11 @@ namespace Voronoi
         {
             Segment[] segments = new Segment[4];
         
-            Segment segment = segments[0] = new Segment(rect.min, new Vector2(rect.xMin, rect.yMax));
+            Segment segment = segments[0] = new Segment(rect.min, new Vector3(rect.xMin, rect.yMax));
         
             segment = segments[1] = new Segment(segment.End, rect.max);
         
-            segment = segments[2] = new Segment(segment.End, new Vector2(rect.xMax, rect.yMin));
+            segment = segments[2] = new Segment(segment.End, new Vector3(rect.xMax, rect.yMin));
         
             segments[3] = new Segment(segment.End, rect.min);
         

@@ -21,12 +21,12 @@ namespace Voronoi
 
         // Check if bisector segment is oriented correct.
         // Checks If Center is on the same side of the bisector.
-        public bool Verify(Vector2 center)
+        public bool Verify(Vector3 center)
         {
             Segment segment = new Segment(End.Point, End.Segment.End);
 
-            return Vector3.Cross(Segment.AsVector3, center - Start.Point).normalized ==
-                   Vector3.Cross(segment.AsVector3, center - segment.Start).normalized;
+            return Vector3.Cross(Segment.Direction, center - Start.Point).normalized ==
+                   Vector3.Cross(segment.Direction, center - segment.Start).normalized;
         }
     }
 }

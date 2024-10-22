@@ -6,18 +6,18 @@ namespace Voronoi
 {
     public struct Cell
     {
-        public Vector2 Center { get; private set; }
+        public Vector3 Center { get; private set; }
 
         public Segment[] Segments { get; private set; }
 
-        public Cell(Vector2 center)
+        public Cell(Vector3 center)
         {
             Center = center;
 
             Segments = Array.Empty<Segment>();
         }
 
-        public Cell(Vector2 center, Segment[] segments) : this(center)
+        public Cell(Vector3 center, Segment[] segments) : this(center)
         {
             Segments = segments;
         }
@@ -42,12 +42,12 @@ namespace Voronoi
             intersection = default;
 
             // Segment AB
-            Vector2 a = bisector.Start;
-            Vector2 b = bisector.End;
+            Vector3 a = bisector.Start;
+            Vector3 b = bisector.End;
 
             // Segment CD
-            Vector2 c = segment.Start;
-            Vector2 d = segment.End;
+            Vector3 c = segment.Start;
+            Vector3 d = segment.End;
 
             float t = ((a.x - c.x) * (c.y - d.y) - (a.y - c.y) * (c.x - d.x)) /
                       ((a.x - b.x) * (c.y - d.y) - (a.y - b.y) * (c.x - d.x));
@@ -58,11 +58,7 @@ namespace Voronoi
             // Both t & u are between 0 and 1
             if (t >= 0 && t <= 1 && u >= 0 && u <= 1)
             {
-                Vector2 point;
-
-                point.x = a.x + t * (b.x - a.x);
-
-                point.y = a.y + t * (b.y - a.y);
+                var point = a + t * (b - a);
 
                 intersection = new Intersection(point, segment);
 
