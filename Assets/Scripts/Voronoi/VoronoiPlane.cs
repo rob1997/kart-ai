@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -23,6 +22,8 @@ namespace Voronoi
 
         private Rect _boundingRect;
         
+        private float _diagonalDistance;
+        
         public void Generate()
         {   
             _cells = new Cell[planeWidth * planeHeight];
@@ -44,6 +45,8 @@ namespace Voronoi
 
             _boundingRect = GetBoundingRect();
 
+            _diagonalDistance = Vector2.Distance(_boundingRect.min, _boundingRect.max);
+            
             for (int i = 0; i < _cells.Length; i++)
             {
                 CalculateSegments(i);
@@ -81,11 +84,11 @@ namespace Voronoi
 
                 Segment connectingSegment = new Segment(cell.Center, other.Center);
 
-                Vector2 bisectorDirection = Vector3.Cross(connectingSegment.AsVector3, Vector3.forward);
+                Vector2 bisectorDirection = Vector3.Cross(connectingSegment.AsVector3, Vector3.forward).normalized * _diagonalDistance;
 
-                Vector2 bisectorEnd = (bisectorDirection * 1000) + connectingSegment.Center;
+                Vector2 bisectorEnd = bisectorDirection + connectingSegment.Center;
 
-                Segment bisector = new Segment(connectingSegment.Center - (bisectorDirection * 1000), bisectorEnd);
+                Segment bisector = new Segment(connectingSegment.Center - bisectorDirection, bisectorEnd);
 
                 if (cell.GetIntersections(bisector, out HashSet<Intersection> intersections))
                 {
@@ -106,7 +109,7 @@ namespace Voronoi
             return i + (j * planeWidth);
         }
 
-        private Vector2 GetRandomCenter(int i, int j)
+        private Vector3 GetRandomCenter(int i, int j)
         {
             float x = i * cellSize;
 
@@ -116,7 +119,7 @@ namespace Voronoi
 
             y += Random.Range(0f, cellSize);
 
-            return new Vector2(x, y);
+            return new Vector3(x, y);
         }
 
         private Rect GetBoundingRect()
