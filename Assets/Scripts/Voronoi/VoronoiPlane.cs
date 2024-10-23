@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Collections;
+using Unity.Jobs;
+using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -34,22 +37,35 @@ namespace Voronoi
             
             _origin = origin;
             
-            _cells = new Cell[planeWidth * planeHeight];
-
-            for (int i = 0; i < planeWidth; i++)
+            int arrayLength = planeWidth * planeHeight;
+            
+            _cells = new Cell[arrayLength];
+            
+            NativeArray<float3> centers = new NativeArray<float3>(arrayLength, Allocator.TempJob);
+            
+            GetRandomCenterJob getRandomCenterJob = new GetRandomCenterJob
             {
-                for (int j = 0; j < planeHeight; j++)
-                {
-                    Vector3 center = GetRandomCenter(i, j);
+                Centers = centers,
+                
+                Width = planeWidth,
+                
+                Height = planeHeight,
+                
+                CellSize = cellSize,
+                
+                Seed = Random.Range(0, int.MaxValue)
+            };
+            
+            JobHandle jobHandle = getRandomCenterJob.Schedule(arrayLength, arrayLength / 6);
+            
+            jobHandle.Complete();
 
-                    while (_cells.Any(c => c.Center == center))
-                    {
-                        center = GetRandomCenter(i, j);
-                    }
-
-                    _cells[GetIndex(i, j)] = new Cell(center);
-                }
+            for (int i = 0; i < arrayLength; i++)
+            {
+                _cells[i] = new Cell(centers[i]);
             }
+            
+            centers.Dispose();
 
             _boundingRect = GetBoundingRect();
 
@@ -114,29 +130,6 @@ namespace Voronoi
             }
 
             _cells[index] = cell;
-        }
-
-        private int GetIndex(int i, int j)
-        {
-            if (planeWidth > planeHeight)
-            {
-                return (i * planeHeight) + j;
-            }
-
-            return i + (j * planeWidth);
-        }
-
-        private Vector3 GetRandomCenter(int i, int j)
-        {
-            float x = i * cellSize;
-
-            x += Random.Range(0f, cellSize);
-
-            float y = j * cellSize;
-
-            y += Random.Range(0f, cellSize);
-
-            return new Vector3(x, y);
         }
 
         private Rect GetBoundingRect()
