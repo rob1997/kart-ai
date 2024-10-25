@@ -1,14 +1,14 @@
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace Voronoi
 {
     public struct Intersection
     {
-        public Vector3 Point { get; private set; }
+        public float3 Point { get; private set; }
 
         public Segment Segment { get; private set; }
 
-        public Intersection(Vector3 point, Segment segment)
+        public Intersection(float3 point, Segment segment)
         {
             Point = point;
 

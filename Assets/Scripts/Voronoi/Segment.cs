@@ -1,17 +1,17 @@
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace Voronoi
 {
     public struct Segment
     {
-        public Vector3 Start { get; private set; }
-        public Vector3 End { get; private set; }
+        public float3 Start { get; private set; }
+        public float3 End { get; private set; }
 
-        public Vector3 Direction => End - Start;
+        public float3 Direction => End - Start;
 
-        public Vector3 Center { get; private set; }
+        public float3 Center { get; private set; }
 
-        public Segment(Vector3 start, Vector3 end)
+        public Segment(float3 start, float3 end)
         {
             Start = start;
 
@@ -22,7 +22,7 @@ namespace Voronoi
 
         public bool Equals(Segment other)
         {
-            return Start == other.Start && End == other.End;
+            return Start.Equals(other.Start) && End.Equals(other.End);
         }
     }
 }

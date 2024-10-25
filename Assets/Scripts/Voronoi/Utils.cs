@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Voronoi
@@ -10,13 +11,13 @@ namespace Voronoi
         {
             Segment[] segments = new Segment[4];
         
-            Segment segment = segments[0] = new Segment(rect.min, new Vector3(rect.xMin, rect.yMax));
+            Segment segment = segments[0] = new Segment(rect.Min.AsFloat3(), new Vector3(rect.MinX, rect.MaxY));
         
-            segment = segments[1] = new Segment(segment.End, rect.max);
+            segment = segments[1] = new Segment(segment.End, rect.Max.AsFloat3());
         
-            segment = segments[2] = new Segment(segment.End, new Vector3(rect.xMax, rect.yMin));
+            segment = segments[2] = new Segment(segment.End, new Vector3(rect.MaxX, rect.MinY));
         
-            segments[3] = new Segment(segment.End, rect.min);
+            segments[3] = new Segment(segment.End, rect.Min.AsFloat3());
         
             return new Cell(cell.Center, segments);
         }
@@ -34,12 +35,12 @@ namespace Voronoi
         
             Segment segment = segments.Last();
             
-            while (segment.End != bisector.Start.Point)
+            while (!segment.End.Equals(bisector.Start.Point))
             {
                 segment = segment.Next(cell.Segments);
 
                 // If last segment
-                if (bisector.Start.Segment.Start == segment.Start)
+                if (bisector.Start.Segment.Start.Equals(segment.Start))
                 {
                     segment = bisector.Start.Segment;
                 }
@@ -52,7 +53,26 @@ namespace Voronoi
 
         public static Segment Next(this Segment segment, Segment[] segments)
         {
-            return segments.Single(s => segment.End == s.Start);
+            return segments.Single(s => segment.End.Equals(s.Start));
+        }
+        
+        public static float3 AsFloat3(this float2 value)
+        {
+            return new float3(value.x, value.y, 0);
+        }
+        
+        // math.cross isn't consistent with Vector3.Cross
+        public static float3 Cross(float3 lhs, float3 rhs)
+        {
+            return new Vector3(lhs.y * rhs.z - lhs.z * rhs.y, lhs.z * rhs.x - lhs.x * rhs.z, lhs.x * rhs.y - lhs.y * rhs.x);
+        }
+        
+        // math.normalize isn't consistent with Vector3.Normalize
+        public static float3 Normalize(float3 value)
+        {
+            float magnitude = math.length(value);
+            
+            return magnitude == 0 ? float3.zero : value / magnitude;
         }
     }
 }

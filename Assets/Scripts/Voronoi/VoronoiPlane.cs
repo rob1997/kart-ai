@@ -69,7 +69,7 @@ namespace Voronoi
 
             _boundingRect = GetBoundingRect();
 
-            _diagonalDistance = Vector3.Distance(_boundingRect.min, _boundingRect.max);
+            _diagonalDistance = math.distance(_boundingRect.Min, _boundingRect.Max);
             
             for (int i = 0; i < _cells.Length; i++)
             {
@@ -117,7 +117,7 @@ namespace Voronoi
 
                 Segment connectingSegment = new Segment(cell.Center, other.Center);
 
-                Vector3 bisectorDirection = Vector3.Cross(connectingSegment.Direction, Vector3.forward).normalized * _diagonalDistance;
+                float3 bisectorDirection = Vector3.Cross(connectingSegment.Direction, Vector3.forward).normalized * _diagonalDistance;
 
                 Vector3 bisectorEnd = bisectorDirection + connectingSegment.Center;
 
@@ -140,10 +140,7 @@ namespace Voronoi
             float maxX = _cells.Max(c => c.Center.x) + padding;
             float maxY = _cells.Max(c => c.Center.y) + padding;
 
-            float sizeX = maxX - minX;
-            float sizeY = maxY - minY;
-
-            return new Rect(minX, minY, sizeX, sizeY);
+            return new Rect(new float2(minX, minY), new float2(maxX, maxY));
         }
 
         private Vector3 ProjectAndTranslate(Vector3 value)
@@ -195,13 +192,13 @@ namespace Voronoi
                 // Draw bounding box
                 Gizmos.color = Color.white;
 
-                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.min), ProjectAndTranslate(new Vector3(_boundingRect.xMin, _boundingRect.yMax)));
+                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Min.AsFloat3()), ProjectAndTranslate(new Vector3(_boundingRect.MinX, _boundingRect.MaxY)));
 
-                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.min), ProjectAndTranslate(new Vector3(_boundingRect.xMax, _boundingRect.yMin)));
+                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Min.AsFloat3()), ProjectAndTranslate(new Vector3(_boundingRect.MaxX, _boundingRect.MinY)));
 
-                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.max), ProjectAndTranslate(new Vector3(_boundingRect.xMax, _boundingRect.yMin)));
+                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Max.AsFloat3()), ProjectAndTranslate(new Vector3(_boundingRect.MaxX, _boundingRect.MinY)));
 
-                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.max), ProjectAndTranslate(new Vector3(_boundingRect.xMin, _boundingRect.yMax)));
+                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Max.AsFloat3()), ProjectAndTranslate(new Vector3(_boundingRect.MinX, _boundingRect.MaxY)));
 
                 foreach (var cell in _cells)
                 {

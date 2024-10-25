@@ -1,4 +1,4 @@
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace Voronoi
 {
@@ -21,12 +21,12 @@ namespace Voronoi
 
         // Check if bisector segment is oriented correct.
         // Checks If Center is on the same side of the bisector.
-        public bool Verify(Vector3 center)
+        public bool Verify(float3 center)
         {
             Segment segment = new Segment(End.Point, End.Segment.End);
 
-            return Vector3.Cross(Segment.Direction, center - Start.Point).normalized ==
-                   Vector3.Cross(segment.Direction, center - segment.Start).normalized;
+            return Utils.Normalize(Utils.Cross(Segment.Direction, center - Start.Point))
+                .Equals(Utils.Normalize(Utils.Cross(segment.Direction, center - segment.Start)));
         }
     }
 }

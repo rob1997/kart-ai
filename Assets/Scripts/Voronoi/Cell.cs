@@ -1,23 +1,23 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace Voronoi
 {
     public struct Cell
     {
-        public Vector3 Center { get; private set; }
+        public float3 Center { get; private set; }
 
         public Segment[] Segments { get; private set; }
 
-        public Cell(Vector3 center)
+        public Cell(float3 center)
         {
             Center = center;
 
             Segments = Array.Empty<Segment>();
         }
 
-        public Cell(Vector3 center, Segment[] segments) : this(center)
+        public Cell(float3 center, Segment[] segments) : this(center)
         {
             Segments = segments;
         }
@@ -42,12 +42,12 @@ namespace Voronoi
             intersection = default;
 
             // Segment AB
-            Vector3 a = bisector.Start;
-            Vector3 b = bisector.End;
+            float3 a = bisector.Start;
+            float3 b = bisector.End;
 
             // Segment CD
-            Vector3 c = segment.Start;
-            Vector3 d = segment.End;
+            float3 c = segment.Start;
+            float3 d = segment.End;
 
             float t = ((a.x - c.x) * (c.y - d.y) - (a.y - c.y) * (c.x - d.x)) /
                       ((a.x - b.x) * (c.y - d.y) - (a.y - b.y) * (c.x - d.x));
