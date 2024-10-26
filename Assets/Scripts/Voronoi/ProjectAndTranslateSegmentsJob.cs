@@ -10,7 +10,9 @@ namespace Voronoi
     {
         public NativeList<Segment> Segments;
 
-        public float3 Normal;
+        public float3 Forward;
+        
+        public float3 Up;
         
         public float3 Origin;
         
@@ -26,7 +28,7 @@ namespace Voronoi
         
         private float3 ProjectAndTranslate(float3 value)
         {
-            return Utils.ProjectAndTranslate(value, Normal, Origin);
+            return Utils.ProjectAndTranslate(value, Forward, Up, Origin);
         }
     }
 }

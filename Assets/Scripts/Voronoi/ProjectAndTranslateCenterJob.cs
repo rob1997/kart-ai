@@ -10,7 +10,9 @@ namespace Voronoi
     {
         public NativeArray<float3> Centers;
 
-        public float3 Normal;
+        public float3 Forward;
+        
+        public float3 Up;
         
         public float3 Origin;
         
@@ -18,7 +20,7 @@ namespace Voronoi
         {
             float3 center = Centers[index];
             
-            Centers[index] = Utils.ProjectAndTranslate(center, Normal, Origin);
+            Centers[index] = Utils.ProjectAndTranslate(center, Forward, Up, Origin);
         }
     }
 }

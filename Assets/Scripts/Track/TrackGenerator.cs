@@ -15,7 +15,7 @@ namespace Track
             {
                 float startTime = Time.realtimeSinceStartup;
                 
-                VoronoiPlane.Generate(transform.position, transform.up);
+                VoronoiPlane.Generate(transform.position, transform.forward, transform.up);
                 
                 // Execution time in milliseconds
                 Debug.Log($"{(Time.realtimeSinceStartup - startTime) * 1000f}ms");

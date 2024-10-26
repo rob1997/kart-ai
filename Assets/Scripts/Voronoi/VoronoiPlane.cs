@@ -25,23 +25,14 @@ namespace Voronoi
 
         private Rect _boundingRect;
         
-        private float _diagonalDistance;
-
-        private Vector3 _normal;
-        
-        private Vector3 _origin;
-        
-        public void Generate(Vector3 origin, Vector3 normal)
+        public void Generate(Vector3 origin, Vector3 forward, Vector3 up)
         {
-            _normal = normal;
-            
-            _origin = origin;
-            
             int arrayLength = planeWidth * planeHeight;
             
             var centers = new NativeArray<float3>(arrayLength, Allocator.TempJob);
             
-            var getRandomCenterJob = new GetRandomCenterJob
+            // Get random voronoi cell center points
+            new GetRandomCenterJob
             {
                 Centers = centers,
                 
@@ -52,14 +43,10 @@ namespace Voronoi
                 CellSize = cellSize,
                 
                 Seed = Random.Range(0, int.MaxValue)
-            };
+            }.Schedule(arrayLength, 16).Complete();
 
-            getRandomCenterJob.Schedule(arrayLength, 16).Complete();
+            _boundingRect = GetBoundingRect(forward, up);
 
-            _boundingRect = GetBoundingRect();
-
-            _diagonalDistance = math.distance(_boundingRect.Min, _boundingRect.Max);
-            
             var segmentsArray = new NativeList<Segment>[arrayLength];
             
             var allJobs = new NativeArray<JobHandle>(arrayLength, Allocator.Temp);
@@ -77,23 +64,22 @@ namespace Voronoi
                     Index = i,
                     
                     BoundingRect = _boundingRect,
-                    
-                    DiagonalDistance = _diagonalDistance
                 }.Schedule();
             }
             
             JobHandle.CompleteAll(allJobs);
 
-            var projectAndTranslateCenterJob = new ProjectAndTranslateCenterJob
+            // Project and translate center points
+            new ProjectAndTranslateCenterJob
             {
                 Centers = centers,
                 
-                Normal = _normal,
+                Forward = forward,
                 
-                Origin = _origin
-            };
-            
-            projectAndTranslateCenterJob.Schedule(arrayLength, 8).Complete();
+                Up = up,
+                
+                Origin = origin
+            }.Schedule(arrayLength, 8).Complete();
             
             _cells = new Cell[arrayLength];
             
@@ -103,9 +89,11 @@ namespace Voronoi
                 {
                     Segments = segmentsArray[i],
 
-                    Normal = _normal,
+                    Forward = forward,
+                    
+                    Up = up,
 
-                    Origin = _origin
+                    Origin = origin
                 }.Schedule();
             }
 
@@ -113,6 +101,8 @@ namespace Voronoi
             
             allJobs.Dispose();
 
+            _boundingRect.ProjectAndTranslate(forward, up, origin);
+            
             for (int i = 0; i < arrayLength; i++)
             {
                 _cells[i] = new Cell(centers[i], segmentsArray[i].AsArray().ToArray());
@@ -137,7 +127,7 @@ namespace Voronoi
         }
 #endif
 
-        private Rect GetBoundingRect()
+        private Rect GetBoundingRect(float3 forward, float3 up)
         {
             float minX = - padding;
             float minY = - padding;
@@ -145,14 +135,9 @@ namespace Voronoi
             float maxX = (planeWidth * cellSize) + padding;
             float maxY = (planeHeight * cellSize) + padding;
 
-            return new Rect(new float2(minX, minY), new float2(maxX, maxY));
+            return new Rect(new float2(minX, minY), new float2(maxX, maxY), forward, up);
         }
 
-        private Vector3 ProjectAndTranslate(float3 value)
-        {
-            return Utils.ProjectAndTranslate(value, _normal, _origin);
-        }
-        
         #region Gizmo
 
         [Space] [SerializeField] private bool drawGizmos = true;
@@ -179,13 +164,13 @@ namespace Voronoi
                 // Draw bounding box
                 Gizmos.color = Color.white;
 
-                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Min), ProjectAndTranslate(new Vector3(_boundingRect.MinX, _boundingRect.MaxY)));
+                Gizmos.DrawLine(_boundingRect.Min, _boundingRect.TopLeft);
 
-                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Min), ProjectAndTranslate(new Vector3(_boundingRect.MaxX, _boundingRect.MinY)));
+                Gizmos.DrawLine(_boundingRect.TopLeft, _boundingRect.Max);
 
-                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Max), ProjectAndTranslate(new Vector3(_boundingRect.MaxX, _boundingRect.MinY)));
+                Gizmos.DrawLine(_boundingRect.Max, _boundingRect.BottomRight);
 
-                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Max), ProjectAndTranslate(new Vector3(_boundingRect.MinX, _boundingRect.MaxY)));
+                Gizmos.DrawLine(_boundingRect.BottomRight, _boundingRect.Min);
 
                 foreach (var cell in _cells)
                 {

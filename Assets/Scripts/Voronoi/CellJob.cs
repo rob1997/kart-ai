@@ -18,8 +18,6 @@ namespace Voronoi
         
         public Rect BoundingRect;
         
-        public float DiagonalDistance;
-        
         public void Execute()
         {
             float3 center = Centers[Index];
@@ -37,7 +35,7 @@ namespace Voronoi
 
                 Segment connectingSegment = new Segment(center, other);
 
-                float3 bisectorDirection = Utils.Cross(connectingSegment.Direction, new float3(0, 0, 1)).Normalize() * DiagonalDistance;
+                float3 bisectorDirection = Utils.Cross(connectingSegment.Direction, new float3(0, 0, 1)).Normalize() * BoundingRect.Diagonal;
 
                 float3 bisectorEnd = bisectorDirection + connectingSegment.Center;
 

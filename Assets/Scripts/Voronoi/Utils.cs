@@ -18,12 +18,12 @@ namespace Voronoi
             return magnitude == 0 ? float3.zero : value / magnitude;
         }
         
-        public static float3 ProjectAndTranslate(float3 value, float3 normal, float3 origin)
+        public static float3 ProjectAndTranslate(float3 value, float3 forward, float3 up, float3 origin)
         {
             // math.quaternion.LookRotation isn't consistent with UnityEngine.Quaternion.LookRotation
-            float3 t = Cross(new float3(0, 1, 0), normal).Normalize();
+            float3 t = Cross(up, forward).Normalize();
             
-            var rotation = new quaternion(new float3x3(t, Cross(normal, t), normal));
+            var rotation = new quaternion(new float3x3(t, Cross(forward, t), forward));
             
             value = RotateFloat3(rotation, value);
             
