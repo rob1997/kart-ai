@@ -19,10 +19,5 @@ namespace Voronoi
 
             Center = (start + end) / 2f;
         }
-
-        public bool Equals(Segment other)
-        {
-            return Start.Equals(other.Start) && End.Equals(other.End);
-        }
     }
 }

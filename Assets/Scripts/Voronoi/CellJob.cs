@@ -54,8 +54,6 @@ namespace Voronoi
                     intersectionArray.Dispose();
                 }
             }
-
-            // _cells[index] = cell;
         }
 
         private void GetSegmentsFromRect()
@@ -157,8 +155,8 @@ namespace Voronoi
             
             return segment.Verify(center) ? segment : new BisectorSegment(second, first);
         }
-        
-        public Segment Next(Segment segment)
+
+        private Segment Next(Segment segment)
         {
             int index = - 1;
             

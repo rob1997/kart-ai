@@ -22,6 +22,8 @@ namespace Voronoi
         [SerializeField] private float padding = 1f;
 
         private Cell[] _cells;
+        
+        private float3[] _centers;
 
         private Rect _boundingRect;
         
@@ -38,8 +40,6 @@ namespace Voronoi
             _origin = origin;
             
             int arrayLength = planeWidth * planeHeight;
-            
-            _cells = new Cell[arrayLength];
             
             NativeArray<float3> centers = new NativeArray<float3>(arrayLength, Allocator.TempJob);
             
@@ -60,11 +60,6 @@ namespace Voronoi
             
             jobHandle.Complete();
 
-            for (int i = 0; i < arrayLength; i++)
-            {
-                _cells[i] = new Cell(centers[i]);
-            }
-            
             _boundingRect = GetBoundingRect();
 
             _diagonalDistance = math.distance(_boundingRect.Min, _boundingRect.Max);
@@ -73,7 +68,7 @@ namespace Voronoi
             
             NativeList<JobHandle> allJobs = new NativeList<JobHandle>(arrayLength, Allocator.Temp);
             
-            for (int i = 0; i < _cells.Length; i++)
+            for (int i = 0; i < arrayLength; i++)
             {
                 segmentsArray[i] = new NativeList<Segment>(0, Allocator.TempJob);
                 
@@ -96,6 +91,8 @@ namespace Voronoi
             JobHandle.CompleteAll(allJobs);
 
             allJobs.Dispose();
+
+            _cells = new Cell[arrayLength];
             
             for (int i = 0; i < arrayLength; i++)
             {
@@ -125,47 +122,13 @@ namespace Voronoi
         }
 #endif
 
-        private void CalculateSegments(int index)
-        {
-            Cell cell = _cells[index];
-
-            cell = cell.FromRect(_boundingRect);
-
-            for (int i = 0; i < _cells.Length; i++)
-            {
-                if (i == index)
-                {
-                    continue;
-                }
-
-                Cell other = _cells[i];
-
-                Segment connectingSegment = new Segment(cell.Center, other.Center);
-
-                float3 bisectorDirection = Utils.Cross(connectingSegment.Direction, new float3(0, 0, 1)).Normalize() * _diagonalDistance;
-
-                float3 bisectorEnd = bisectorDirection + connectingSegment.Center;
-
-                Segment bisector = new Segment(connectingSegment.Center - bisectorDirection, bisectorEnd);
-
-                if (cell.GetIntersections(bisector, out NativeHashSet<Intersection> intersections))
-                {
-                    cell = cell.GetSegmentsFromIntersections(intersections.ToNativeArray(Allocator.Temp));
-
-                    intersections.Dispose();
-                }
-            }
-
-            _cells[index] = cell;
-        }
-
         private Rect GetBoundingRect()
         {
-            float minX = _cells.Min(c => c.Center.x) - padding;
-            float minY = _cells.Min(c => c.Center.y) - padding;
+            float minX = - padding;
+            float minY = - padding;
 
-            float maxX = _cells.Max(c => c.Center.x) + padding;
-            float maxY = _cells.Max(c => c.Center.y) + padding;
+            float maxX = (planeWidth * cellSize) + padding;
+            float maxY = (planeHeight * cellSize) + padding;
 
             return new Rect(new float2(minX, minY), new float2(maxX, maxY));
         }

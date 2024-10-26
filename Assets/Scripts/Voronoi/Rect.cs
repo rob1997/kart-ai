@@ -2,6 +2,9 @@ using Unity.Mathematics;
 
 namespace Voronoi
 {
+    /// <summary>
+    /// Rect implementation that works with Unity Jobs.
+    /// </summary>
     public struct Rect
     {
         public float3 Min;

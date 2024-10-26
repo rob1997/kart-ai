@@ -2,6 +2,9 @@ using Unity.Mathematics;
 
 namespace Voronoi
 {
+    /// <summary>
+    /// A segment containing intersecting and adjacent segments.
+    /// </summary>
     public struct BisectorSegment
     {
         public Intersection Start { get; private set; }
