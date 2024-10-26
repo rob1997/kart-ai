@@ -23,6 +23,11 @@ namespace Voronoi
 
         private Rect _boundingRect;
         
+        public void Generate(Transform transform)
+        {
+            Generate(transform.position, transform.forward, transform.up);
+        }
+        
         public void Generate(Vector3 origin, Vector3 forward, Vector3 up)
         {
             int arrayLength = planeWidth * planeHeight;
