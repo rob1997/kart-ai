@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Mathematics;
 
 namespace Voronoi
@@ -22,9 +23,9 @@ namespace Voronoi
             Segments = segments;
         }
 
-        public bool GetIntersections(Segment bisector, out HashSet<Intersection> intersections)
+        public bool GetIntersections(Segment bisector, out NativeHashSet<Intersection> intersections)
         {
-            intersections = new HashSet<Intersection>();
+            intersections = new NativeHashSet<Intersection>(0, Allocator.Temp);
 
             foreach (var segment in Segments)
             {

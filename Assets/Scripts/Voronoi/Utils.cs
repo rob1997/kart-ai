@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -11,21 +12,23 @@ namespace Voronoi
         {
             Segment[] segments = new Segment[4];
         
-            Segment segment = segments[0] = new Segment(rect.Min.AsFloat3(), new Vector3(rect.MinX, rect.MaxY));
+            Segment segment = segments[0] = new Segment(rect.Min, new Vector3(rect.MinX, rect.MaxY));
         
-            segment = segments[1] = new Segment(segment.End, rect.Max.AsFloat3());
+            segment = segments[1] = new Segment(segment.End, rect.Max);
         
             segment = segments[2] = new Segment(segment.End, new Vector3(rect.MaxX, rect.MinY));
         
-            segments[3] = new Segment(segment.End, rect.Min.AsFloat3());
+            segments[3] = new Segment(segment.End, rect.Min);
         
             return new Cell(cell.Center, segments);
         }
         
-        public static Cell FromIntersections(this Cell cell, HashSet<Intersection> intersections)
+        public static Cell GetSegmentsFromIntersections(this Cell cell, NativeArray<Intersection> intersections)
         {
-            BisectorSegment bisector = cell.GetBisectorSegment(intersections.First(), intersections.Last());
+            BisectorSegment bisector = cell.GetBisectorSegment(intersections[0], intersections[1]);
 
+            intersections.Dispose();
+            
             List<Segment> segments = new List<Segment>
             {
                 bisector.Segment,
@@ -56,11 +59,6 @@ namespace Voronoi
             return segments.Single(s => segment.End.Equals(s.Start));
         }
         
-        public static float3 AsFloat3(this float2 value)
-        {
-            return new float3(value.x, value.y, 0);
-        }
-        
         // math.cross isn't consistent with Vector3.Cross
         public static float3 Cross(float3 lhs, float3 rhs)
         {
@@ -68,7 +66,7 @@ namespace Voronoi
         }
         
         // math.normalize isn't consistent with Vector3.Normalize
-        public static float3 Normalize(float3 value)
+        public static float3 Normalize(this float3 value)
         {
             float magnitude = math.length(value);
             

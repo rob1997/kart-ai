@@ -1,8 +1,9 @@
+using System;
 using Unity.Mathematics;
 
 namespace Voronoi
 {
-    public struct Intersection
+    public struct Intersection : IEquatable<Intersection>
     {
         public float3 Point { get; private set; }
 

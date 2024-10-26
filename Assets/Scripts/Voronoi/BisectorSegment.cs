@@ -25,8 +25,8 @@ namespace Voronoi
         {
             Segment segment = new Segment(End.Point, End.Segment.End);
 
-            return Utils.Normalize(Utils.Cross(Segment.Direction, center - Start.Point))
-                .Equals(Utils.Normalize(Utils.Cross(segment.Direction, center - segment.Start)));
+            return Utils.Cross(Segment.Direction, center - Start.Point).Normalize()
+                .Equals(Utils.Cross(segment.Direction, center - segment.Start).Normalize());
         }
     }
 }

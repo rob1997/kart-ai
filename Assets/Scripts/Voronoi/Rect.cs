@@ -4,8 +4,8 @@ namespace Voronoi
 {
     public struct Rect
     {
-        public float2 Min;
-        public float2 Max;
+        public float3 Min;
+        public float3 Max;
 
         public float MinX => Min.x;
         public float MinY => Min.y;
@@ -15,8 +15,8 @@ namespace Voronoi
         
         public Rect(float2 min, float2 max)
         {
-            Min = min;
-            Max = max;
+            Min = new float3(min.xy, 0);
+            Max = new float3(max.xy, 0);
         }
     }
 }

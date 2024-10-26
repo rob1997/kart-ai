@@ -65,25 +65,50 @@ namespace Voronoi
                 _cells[i] = new Cell(centers[i]);
             }
             
-            centers.Dispose();
-
             _boundingRect = GetBoundingRect();
 
             _diagonalDistance = math.distance(_boundingRect.Min, _boundingRect.Max);
             
-            for (int i = 0; i < _cells.Length; i++)
-            {
-                CalculateSegments(i);
-            }
+            NativeList<Segment>[] segmentsArray = new NativeList<Segment>[arrayLength];
+            
+            NativeList<JobHandle> allJobs = new NativeList<JobHandle>(arrayLength, Allocator.Temp);
             
             for (int i = 0; i < _cells.Length; i++)
             {
+                segmentsArray[i] = new NativeList<Segment>(0, Allocator.TempJob);
+                
+                CellJob cellJob = new CellJob
+                {
+                    Centers = centers,
+                    
+                    Segments = segmentsArray[i],
+                    
+                    Index = i,
+                    
+                    BoundingRect = _boundingRect,
+                    
+                    DiagonalDistance = _diagonalDistance
+                };
+                
+                allJobs.Add(cellJob.Schedule());
+            }
+            
+            JobHandle.CompleteAll(allJobs);
+
+            allJobs.Dispose();
+            
+            for (int i = 0; i < arrayLength; i++)
+            {
+                _cells[i] = new Cell(centers[i], segmentsArray[i].AsArray().ToArray());
+
+                segmentsArray[i].Dispose();
+                
                 Cell cell = _cells[i];
                 
                 _cells[i] = ProjectAndTranslate(cell);
             }
 
-            
+            centers.Dispose();
             
 #if UNITY_EDITOR
             if (!_drawing)
@@ -117,15 +142,17 @@ namespace Voronoi
 
                 Segment connectingSegment = new Segment(cell.Center, other.Center);
 
-                float3 bisectorDirection = Vector3.Cross(connectingSegment.Direction, Vector3.forward).normalized * _diagonalDistance;
+                float3 bisectorDirection = Utils.Cross(connectingSegment.Direction, new float3(0, 0, 1)).Normalize() * _diagonalDistance;
 
-                Vector3 bisectorEnd = bisectorDirection + connectingSegment.Center;
+                float3 bisectorEnd = bisectorDirection + connectingSegment.Center;
 
                 Segment bisector = new Segment(connectingSegment.Center - bisectorDirection, bisectorEnd);
 
-                if (cell.GetIntersections(bisector, out HashSet<Intersection> intersections))
+                if (cell.GetIntersections(bisector, out NativeHashSet<Intersection> intersections))
                 {
-                    cell = cell.FromIntersections(intersections);
+                    cell = cell.GetSegmentsFromIntersections(intersections.ToNativeArray(Allocator.Temp));
+
+                    intersections.Dispose();
                 }
             }
 
@@ -192,13 +219,13 @@ namespace Voronoi
                 // Draw bounding box
                 Gizmos.color = Color.white;
 
-                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Min.AsFloat3()), ProjectAndTranslate(new Vector3(_boundingRect.MinX, _boundingRect.MaxY)));
+                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Min), ProjectAndTranslate(new Vector3(_boundingRect.MinX, _boundingRect.MaxY)));
 
-                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Min.AsFloat3()), ProjectAndTranslate(new Vector3(_boundingRect.MaxX, _boundingRect.MinY)));
+                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Min), ProjectAndTranslate(new Vector3(_boundingRect.MaxX, _boundingRect.MinY)));
 
-                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Max.AsFloat3()), ProjectAndTranslate(new Vector3(_boundingRect.MaxX, _boundingRect.MinY)));
+                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Max), ProjectAndTranslate(new Vector3(_boundingRect.MaxX, _boundingRect.MinY)));
 
-                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Max.AsFloat3()), ProjectAndTranslate(new Vector3(_boundingRect.MinX, _boundingRect.MaxY)));
+                Gizmos.DrawLine(ProjectAndTranslate(_boundingRect.Max), ProjectAndTranslate(new Vector3(_boundingRect.MinX, _boundingRect.MaxY)));
 
                 foreach (var cell in _cells)
                 {
