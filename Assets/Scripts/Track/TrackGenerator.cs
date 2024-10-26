@@ -13,7 +13,12 @@ namespace Track
         {
             if (Keyboard.current.spaceKey.wasPressedThisFrame)
             {
+                float startTime = Time.realtimeSinceStartup;
+                
                 VoronoiPlane.Generate(transform.position, transform.up);
+                
+                // Execution time in milliseconds
+                Debug.Log($"{(Time.realtimeSinceStartup - startTime) * 1000f}ms");
             }
         }
     }
