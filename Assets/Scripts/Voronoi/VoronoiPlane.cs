@@ -19,9 +19,7 @@ namespace Voronoi
 
         [SerializeField] private float padding = 1f;
 
-        private Cell[] _cells;
-        
-        private float3[] _centers;
+        public Cell[] Cells { get; private set; }
 
         private Rect _boundingRect;
         
@@ -81,8 +79,6 @@ namespace Voronoi
                 Origin = origin
             }.Schedule(arrayLength, 8).Complete();
             
-            _cells = new Cell[arrayLength];
-            
             for (int i = 0; i < arrayLength; i++)
             {
                 allJobs[i] = new ProjectAndTranslateSegmentsJob
@@ -103,9 +99,11 @@ namespace Voronoi
 
             _boundingRect.ProjectAndTranslate(forward, up, origin);
             
+            Cells = new Cell[arrayLength];
+            
             for (int i = 0; i < arrayLength; i++)
             {
-                _cells[i] = new Cell(centers[i], segmentsArray[i].AsArray().ToArray());
+                Cells[i] = new Cell(centers[i], segmentsArray[i].AsArray().ToArray());
 
                 segmentsArray[i].Dispose();
             }
@@ -151,10 +149,10 @@ namespace Voronoi
                 return;
             }
 
-            if (_cells != null)
+            if (Cells != null)
             {
                 // Draw centers
-                foreach (Cell cell in _cells)
+                foreach (Cell cell in Cells)
                 {
                     Gizmos.color = Color.green;
 
@@ -172,7 +170,7 @@ namespace Voronoi
 
                 Gizmos.DrawLine(_boundingRect.BottomRight, _boundingRect.Min);
 
-                foreach (var cell in _cells)
+                foreach (var cell in Cells)
                 {
                     foreach (var segment in cell.Segments)
                     {
