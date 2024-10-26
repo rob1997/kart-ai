@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -55,10 +53,8 @@ namespace Voronoi
                 
                 Seed = Random.Range(0, int.MaxValue)
             };
-            
-            JobHandle jobHandle = getRandomCenterJob.Schedule(arrayLength, arrayLength / 6);
-            
-            jobHandle.Complete();
+
+            getRandomCenterJob.Schedule(arrayLength, 16).Complete();
 
             _boundingRect = GetBoundingRect();
 
@@ -66,7 +62,7 @@ namespace Voronoi
             
             NativeList<Segment>[] segmentsArray = new NativeList<Segment>[arrayLength];
             
-            NativeList<JobHandle> allJobs = new NativeList<JobHandle>(arrayLength, Allocator.Temp);
+            NativeArray<JobHandle> allCellJobs = new NativeArray<JobHandle>(arrayLength, Allocator.Temp);
             
             for (int i = 0; i < arrayLength; i++)
             {
@@ -85,12 +81,12 @@ namespace Voronoi
                     DiagonalDistance = _diagonalDistance
                 };
                 
-                allJobs.Add(cellJob.Schedule());
+                allCellJobs[i] = cellJob.Schedule();
             }
             
-            JobHandle.CompleteAll(allJobs);
+            JobHandle.CompleteAll(allCellJobs);
 
-            allJobs.Dispose();
+            allCellJobs.Dispose();
 
             _cells = new Cell[arrayLength];
             
