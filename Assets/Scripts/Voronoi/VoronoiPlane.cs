@@ -39,9 +39,9 @@ namespace Voronoi
             
             int arrayLength = planeWidth * planeHeight;
             
-            NativeArray<float3> centers = new NativeArray<float3>(arrayLength, Allocator.TempJob);
+            var centers = new NativeArray<float3>(arrayLength, Allocator.TempJob);
             
-            GetRandomCenterJob getRandomCenterJob = new GetRandomCenterJob
+            var getRandomCenterJob = new GetRandomCenterJob
             {
                 Centers = centers,
                 
@@ -60,15 +60,15 @@ namespace Voronoi
 
             _diagonalDistance = math.distance(_boundingRect.Min, _boundingRect.Max);
             
-            NativeList<Segment>[] segmentsArray = new NativeList<Segment>[arrayLength];
+            var segmentsArray = new NativeList<Segment>[arrayLength];
             
-            NativeArray<JobHandle> allCellJobs = new NativeArray<JobHandle>(arrayLength, Allocator.Temp);
+            var allJobs = new NativeArray<JobHandle>(arrayLength, Allocator.Temp);
             
             for (int i = 0; i < arrayLength; i++)
             {
                 segmentsArray[i] = new NativeList<Segment>(0, Allocator.TempJob);
                 
-                CellJob cellJob = new CellJob
+                allJobs[i] = new CellJob
                 {
                     Centers = centers,
                     
@@ -79,28 +79,47 @@ namespace Voronoi
                     BoundingRect = _boundingRect,
                     
                     DiagonalDistance = _diagonalDistance
-                };
-                
-                allCellJobs[i] = cellJob.Schedule();
+                }.Schedule();
             }
             
-            JobHandle.CompleteAll(allCellJobs);
+            JobHandle.CompleteAll(allJobs);
 
-            allCellJobs.Dispose();
-
+            var projectAndTranslateCenterJob = new ProjectAndTranslateCenterJob
+            {
+                Centers = centers,
+                
+                Normal = _normal,
+                
+                Origin = _origin
+            };
+            
+            projectAndTranslateCenterJob.Schedule(arrayLength, 8).Complete();
+            
             _cells = new Cell[arrayLength];
             
+            for (int i = 0; i < arrayLength; i++)
+            {
+                allJobs[i] = new ProjectAndTranslateSegmentsJob
+                {
+                    Segments = segmentsArray[i],
+
+                    Normal = _normal,
+
+                    Origin = _origin
+                }.Schedule();
+            }
+
+            JobHandle.CompleteAll(allJobs);
+            
+            allJobs.Dispose();
+
             for (int i = 0; i < arrayLength; i++)
             {
                 _cells[i] = new Cell(centers[i], segmentsArray[i].AsArray().ToArray());
 
                 segmentsArray[i].Dispose();
-                
-                Cell cell = _cells[i];
-                
-                _cells[i] = ProjectAndTranslate(cell);
             }
-
+            
             centers.Dispose();
             
 #if UNITY_EDITOR
@@ -129,27 +148,9 @@ namespace Voronoi
             return new Rect(new float2(minX, minY), new float2(maxX, maxY));
         }
 
-        private Vector3 ProjectAndTranslate(Vector3 value)
+        private Vector3 ProjectAndTranslate(float3 value)
         {
-            value = Quaternion.LookRotation(_normal) * value;
-            
-            return value + _origin;
-        }
-        
-        private Cell ProjectAndTranslate(Cell cell)
-        {
-            Vector3 center = ProjectAndTranslate(cell.Center);
-
-            Segment[] segments = new Segment[cell.Segments.Length];
-            
-            for (int i = 0; i < segments.Length; i++)
-            {
-                Segment segment = cell.Segments[i];
-                
-                segments[i] = new Segment(ProjectAndTranslate(segment.Start), ProjectAndTranslate(segment.End));
-            }
-            
-            return new Cell(center, segments);
+            return Utils.ProjectAndTranslate(value, _normal, _origin);
         }
         
         #region Gizmo
