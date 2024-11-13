@@ -294,8 +294,9 @@ MonoBehaviour:
     planeHeight: 5
     cellSize: 5
     padding: 1
-    drawGizmos: 1
+    drawGizmos: 0
     centerRadius: 0.25
+  loop: 1
 --- !u!4 &1412316452
 Transform:
   m_ObjectHideFlags: 0

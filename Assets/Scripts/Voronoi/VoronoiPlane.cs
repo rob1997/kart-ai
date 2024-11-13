@@ -21,6 +21,8 @@ namespace Voronoi
 
         public Cell[] Cells { get; private set; }
 
+        public Vector2Int Size => new Vector2Int(planeWidth, planeHeight);
+        
         private Rect _boundingRect;
         
         public void Generate(Transform transform)
@@ -156,14 +158,6 @@ namespace Voronoi
 
             if (Cells != null)
             {
-                // Draw centers
-                foreach (Cell cell in Cells)
-                {
-                    Gizmos.color = Color.green;
-
-                    Gizmos.DrawSphere(cell.Center, centerRadius);
-                }
-
                 // Draw bounding box
                 Gizmos.color = Color.white;
 
@@ -177,6 +171,14 @@ namespace Voronoi
 
                 foreach (var cell in Cells)
                 {
+                    Gizmos.color = Color.green;
+
+                    // Draw cell center
+                    Gizmos.DrawSphere(cell.Center, centerRadius);
+                    
+                    Gizmos.color = Color.white;
+                    
+                    // Draw cell sizes/segments
                     foreach (var segment in cell.Segments)
                     {
                         Gizmos.DrawLine(segment.Start, segment.End);
