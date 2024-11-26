@@ -289,13 +289,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 621fa2de2c1d45b7b63360073933ae86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <VoronoiPlane>k__BackingField:
-    planeWidth: 5
-    planeHeight: 5
-    cellSize: 5
-    padding: 1
-    drawGizmos: 0
-    centerRadius: 0.25
+  width: 1
+  height: 1
+  size: 5
   loop: 1
 --- !u!4 &1412316452
 Transform:

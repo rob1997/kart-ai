@@ -39,5 +39,28 @@ namespace Voronoi
         {
             return Center.Equals(other.Center);
         }
+
+        // TODO: this shouldn't happen, it's a bug in Voronoi generation
+        // where segments aren't properly calculated (center isn't within segments and segments are unusually smaller)
+        public bool Verify()
+        {
+            float3 previous = Utils.Cross(Segments[0].Direction, Center - Segments[0].Start).Normalize();
+            
+            for (int i = 1; i < Segments.Length; i++)
+            {
+                Segment segment = Segments[i];
+                
+                float3 current = Utils.Cross(segment.Direction, Center - segment.Start).Normalize();
+                
+                if (!previous.Equals(current))
+                {
+                    return false;
+                }
+                
+                previous = current;
+            }
+
+            return true;
+        }
     }
 }

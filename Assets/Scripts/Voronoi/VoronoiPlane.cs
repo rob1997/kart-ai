@@ -9,7 +9,7 @@ namespace Voronoi
 {
     [Serializable]
 
-    public class VoronoiPlane
+    public class VoronoiPlane : IDisposable
     {
         [SerializeField] private int planeWidth = 5;
 
@@ -21,9 +21,16 @@ namespace Voronoi
 
         public Cell[] Cells { get; private set; }
 
-        public Vector2Int Size => new Vector2Int(planeWidth, planeHeight);
-        
         private Rect _boundingRect;
+
+        public VoronoiPlane(int width, int height, float size)
+        {
+            planeWidth = width;
+            
+            planeHeight = height;
+            
+            cellSize = size;
+        }
         
         public void Generate(Transform transform)
         {
@@ -188,5 +195,10 @@ namespace Voronoi
         }
 
         #endregion
+        
+        public void Dispose()
+        {
+            Drawer.Instance.OnDraw -= Draw;
+        }
     }
 }
