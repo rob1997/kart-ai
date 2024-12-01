@@ -6,6 +6,7 @@ using Voronoi;
 
 namespace Track
 {
+    // TODO: re-implement with Job system
     [Serializable]
     public class RectPath : Path
     {

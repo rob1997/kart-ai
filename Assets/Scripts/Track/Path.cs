@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using Voronoi;
@@ -42,43 +44,37 @@ namespace Track
         
         private List<Segment> GetEdgeSegments(List<Cell> interior)
         {
-            Dictionary<Segment, int> countDictionary = new Dictionary<Segment, int>();
-            
+            NativeList<Segment> allSegments = new NativeList<Segment>(Allocator.TempJob);
+
             foreach (Cell cell in interior)
             {
-                foreach (Segment segment in cell.Segments)
-                {
-                    bool isUnique = true;
-                            
-                    foreach (Segment key in countDictionary.Keys)
-                    {
-                        if (key.SameAs(segment))
-                        {
-                            countDictionary[key]++;
-            
-                            isUnique = false;
-                                        
-                            break;
-                        }
-                    }
-            
-                    if (isUnique)
-                    {
-                        countDictionary.Add(segment, 1);
-                    }
-                }
+                NativeArray<Segment> array = new NativeArray<Segment>(cell.Segments, Allocator.Temp);
+
+                allSegments.AddRange(array);
+
+                array.Dispose();
             }
-            
+
+            int length = allSegments.Length;
+
+            NativeArray<int> edgeArray = new NativeArray<int>(length, Allocator.TempJob);
+
+            new EdgeSegmentsJob { AllSegments = allSegments, EdgeArray = edgeArray }.Schedule(length, 16).Complete();
+
             List<Segment> segments = new List<Segment>();
-            
-            foreach (var pair in countDictionary)
+
+            for (int i = 0; i < edgeArray.Length; i++)
             {
-                if (pair.Value == 1)
+                if (edgeArray[i] == 1)
                 {
-                    segments.Add(pair.Key);
+                    segments.Add(allSegments[i]);
                 }
             }
-            
+
+            allSegments.Dispose();
+
+            edgeArray.Dispose();
+
             return segments;
         }
 
