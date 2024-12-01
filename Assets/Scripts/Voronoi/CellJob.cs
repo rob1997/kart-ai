@@ -166,6 +166,7 @@ namespace Voronoi
                 {
                     if (index != - 1)
                     {
+                        // TODO: this keeps happening sometimes
                         throw new Exception("Next segment not unique");
                     }
                     

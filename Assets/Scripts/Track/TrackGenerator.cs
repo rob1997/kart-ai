@@ -7,7 +7,7 @@ namespace Track
     {
         public const float Tolerance = 0.05f;
 
-        [SerializeField] private Path path;
+        [SerializeField] private RandomPath path;
 
         [SerializeField] private int loop;
 

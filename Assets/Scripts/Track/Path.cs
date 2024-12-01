@@ -7,61 +7,19 @@ using Voronoi;
 namespace Track
 {
     [Serializable]
-    public class Path : IDisposable
+    public abstract class Path : IDisposable
     {
-        [SerializeField] private int width = 3;
-
-        [SerializeField] private int height = 3;
-
-        [SerializeField] private float size = 5f;
-
         public List<float3> Vertices { get; private set; } = new List<float3>();
 
+        private Transform _transform;
+        
         public void Generate(Transform transform)
         {
-            List<Cell> interior = new List<Cell>();
-
-            List<Cell> exterior = new List<Cell>();
+            _transform = transform;
             
-            using (VoronoiPlane plane = new VoronoiPlane(width + 2, height + 2, size))
-            {
-                plane.Generate(transform);
-
-                Cell[] cells = plane.Cells;
-                
-                foreach (Cell cell in cells)
-                {
-                    if (cell.Verify())
-                    {
-                        if (FilterCell(cell.Segments, cells))
-                        {
-                            interior.Add(cell);
-                        }
-                        else
-                        {
-                            exterior.Add(cell);
-                        }
-                    }
-                }
-            }
+            List<Cell> cells = GetCells(transform);
             
-            if (interior.Count == 0)
-            {
-                interior.Add(exterior[0]);
-                    
-                exterior.RemoveAt(0);
-            }
-
-            List<List<Cell>> clusters = GetClusters(interior);
-            
-            while (clusters.Count > 1)
-            {
-                clusters = MergeClusters(clusters, exterior);
-            }
-
-            interior = clusters[0];
-            
-            List<Segment> segments = GetEdgeSegments(interior);
+            List<Segment> segments = GetEdgeSegments(cells);
             
             GetVertices(segments);
             
@@ -79,179 +37,9 @@ namespace Track
 #else
         }
 #endif
+
+        public abstract List<Cell> GetCells(Transform transform);
         
-        private bool FilterCell(Segment[] segments, Cell[] cells)
-        {
-            foreach (Segment segment in segments)
-            {
-                bool interior = false;
-
-                float3 previous = Voronoi.Utils.Cross(cells[0].Center - segment.Start, segment.Direction).Normalize();
-                
-                for (int i = 1; i < cells.Length; i++)
-                {
-                    float3 next = Voronoi.Utils.Cross(cells[i].Center - segment.Start, segment.Direction)
-                        .Normalize();
-
-                    if (!previous.Equals(next))
-                    {
-                        interior = true;
-
-                        break;
-                    }
-
-                    previous = next;
-                }
-                
-                if (!interior)
-                {
-                    return false;
-                }
-            }
-            
-            return true;
-        }
-        
-        private List<List<Cell>> GetClusters(List<Cell> interior)
-        {
-            List<List<Cell>> groups = new List<List<Cell>>();
-            
-            HashSet<int> visited = new HashSet<int>();
-
-            void DepthFirstSearch(int index, List<Cell> group)
-            {
-                Stack<int> stack = new Stack<int>();
-                
-                stack.Push(index);
-
-                while (stack.Count > 0)
-                {
-                    int current = stack.Pop();
-
-                    if (!visited.Add(current))
-                    {
-                        continue;
-                    }
-
-                    group.Add(interior[current]);
-
-                    for (int i = 0; i < interior.Count; i++)
-                    {
-                        if (!visited.Contains(i) && interior[current].IsAdjacentTo(interior[i]))
-                        {
-                            stack.Push(i);
-                        }
-                    }
-                }
-            }
-
-            for (int i = 0; i < interior.Count; i++)
-            {
-                if (!visited.Contains(i))
-                {
-                    List<Cell> group = new List<Cell>();
-                    
-                    DepthFirstSearch(i, group);
-                    
-                    groups.Add(group);
-                }
-            }
-
-            return groups;
-        }
-        
-        private List<List<Cell>> MergeClusters(List<List<Cell>> clusters, List<Cell> exterior)
-        {
-            List<Cell> clusterA = new List<Cell>(clusters[0]);
-
-            List<Cell> clusterB;
-            
-            float minimumDistance = float.MaxValue;
-            
-            int index = 0;
-            
-            for (var i = 1; i < clusters.Count; i++)
-            {
-                clusterB = clusters[i];
-                
-                foreach (Cell cellA in clusterA)
-                {
-                    foreach (Cell cellB in clusterB)
-                    {
-                        foreach (float3 vertexA in cellA.Vertices)
-                        {
-                            foreach (float3 vertexB in cellB.Vertices)
-                            {
-                                float distance = math.distance(vertexA, vertexB);
-                            
-                                if (distance < minimumDistance)
-                                {
-                                    minimumDistance = distance;
-                                
-                                    index = i;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            clusterB = clusters[index];
-            
-            clusters.RemoveAt(index);
-            
-            while (true)
-            {
-                minimumDistance = float.MaxValue;
-
-                index = - 1;
-
-                for (int i = 0; i < exterior.Count; i++)
-                {
-                    Cell cell = exterior[i];
-                    
-                    foreach (Cell cellA in clusterA)
-                    {
-                        if (cell.IsAdjacentTo(cellA))
-                        {
-                            foreach (Cell cellB in clusterB)
-                            {
-                                if (cell.IsAdjacentTo(cellB))
-                                {
-                                    clusterA.AddRange(clusterB);
-                                    
-                                    clusterA.Add(cell);
-                                    
-                                    clusters[0] = clusterA;
-                                    
-                                    return clusters;
-                                }
-
-                                foreach (float3 vertex in cell.Vertices)
-                                {
-                                    foreach (float3 vertexB in cellB.Vertices)
-                                    {
-                                        float distance = math.distance(vertex, vertexB);
-
-                                        if (distance < minimumDistance)
-                                        {
-                                            minimumDistance = distance;
-                                            
-                                            index = i;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                clusterA.Add(exterior[index]);
-
-                exterior.RemoveAt(index);
-            }
-        }
-
         private List<Segment> GetEdgeSegments(List<Cell> interior)
         {
             Dictionary<Segment, int> countDictionary = new Dictionary<Segment, int>();
@@ -298,9 +86,11 @@ namespace Track
         {
             Vertices.Clear();
             
-            Vertices.AddRange(segments[0].Vertices());
+            int first = GetLeftMostSegment(segments);
+            
+            Vertices.AddRange(segments[first].Vertices());
 
-            List<int> visited = new List<int>{ 0 };
+            List<int> visited = new List<int>{ first };
             
             int last = GetClosestVertex(false, false);
             
@@ -352,6 +142,36 @@ namespace Track
                 
                 return closest;
             }
+        }
+
+        private int GetLeftMostSegment(List<Segment> segments)
+        {
+            float minimum = float.MaxValue;
+            
+            int leftMost = - 1;
+            
+            float3 left = - _transform.right;
+            
+            for (int i = 0; i < segments.Count; i++)
+            {
+                Segment segment = segments[i];
+                
+                foreach (float3 vertex in segment.Vertices())
+                {
+                    float3 direction = vertex - (float3) _transform.position;
+                    
+                    float dot = math.dot(left, direction);
+                    
+                    if (dot < minimum)
+                    {
+                        minimum = dot;
+                        
+                        leftMost = i;
+                    }
+                }
+            }
+
+            return leftMost;
         }
 
         #region Gizmo
