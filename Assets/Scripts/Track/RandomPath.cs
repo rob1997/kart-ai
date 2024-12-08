@@ -12,6 +12,21 @@ namespace Track
         [SerializeField] private int cellCount = 10;
         
         [SerializeField] private float scale = 5;
+        
+        [SerializeField, Range(0f, 1f)] private float complexity = .5f;
+
+        public override float Scale => scale;
+
+        public override float NormalizedComplexity => complexity;
+        
+        public RandomPath(int cellCount, float scale, float complexity)
+        {
+            this.cellCount = cellCount;
+            
+            this.scale = scale;
+            
+            this.complexity = complexity;
+        }
 
         public override List<Cell> GetCells(Transform transform)
         {
@@ -28,9 +43,11 @@ namespace Track
 
                 for (int i = 0; i < plane.Cells.Length; i++)
                 {
-                    if (IsInnerCell(i, size))
+                    Cell cell = plane.Cells[i];
+                    
+                    if (IsInnerCell(i, size) && cell.Verify(transform.up))
                     {
-                        cells.Add(plane.Cells[i]);
+                        cells.Add(cell);
                     }
                 }
             }
@@ -69,23 +86,18 @@ namespace Track
             
                 Cell cell = cells[index];
             
-                if (cell.Verify())
+                interior.Add(cell);
+                
+                indexed.Add(index);
+
+                AddAdjacentCells();
+
+                if (adjacencyHashSet.Contains(index))
                 {
-                    interior.Add(cell);
-                
-                    indexed.Add(index);
-
-                    AddAdjacentCells();
-
-                    if (adjacencyHashSet.Contains(index))
-                    {
-                        adjacencyHashSet.Remove(index);
-                    }
-                
-                    return true;
+                    adjacencyHashSet.Remove(index);
                 }
-
-                return false;
+                
+                return true;
             }
             
             void AddAdjacentCells()

@@ -14,6 +14,11 @@ namespace Track
         public List<float3> Vertices { get; private set; } = new List<float3>();
 
         private Transform _transform;
+
+        public abstract float Scale { get; }
+        
+        // 0 - 1 range
+        public abstract float NormalizedComplexity { get; }
         
         public void Generate(Transform transform)
         {
@@ -24,6 +29,22 @@ namespace Track
             List<Segment> segments = GetEdgeSegments(cells);
             
             GetVertices(segments);
+
+            for (int i = 1; i < Vertices.Count; i++)
+            {
+                float3 current = Vertices[i];
+                
+                float3 next = Vertices[(i + 1) % Vertices.Count];
+
+                float minDistance = Scale - (Scale * NormalizedComplexity);
+                
+                if (math.distance(current, next) < minDistance)
+                {
+                    Vertices.RemoveAt(i);
+                    
+                    i--;
+                }
+            }
             
 #if UNITY_EDITOR
             if (!_drawing)

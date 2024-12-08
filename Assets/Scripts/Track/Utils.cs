@@ -6,9 +6,11 @@ namespace Track
 {
     public static class Utils
     {
+        public const float Tolerance = 0.05f;
+        
         public static bool Approximately(this float3 value, float3 other)
         {
-            float tolerance = TrackGenerator.Tolerance;
+            float tolerance = Tolerance;
             
             float3 delta = math.abs(value - other);
             

@@ -16,6 +16,12 @@ namespace Track
         
         [SerializeField] private float scale = 5f;
         
+        [SerializeField, Range(0f, 1f)] private float complexity = .5f;
+
+        public override float Scale => scale;
+
+        public override float NormalizedComplexity => complexity;
+        
         public override List<Cell> GetCells(Transform transform)
         {
             List<Cell> interior = new List<Cell>();
@@ -30,7 +36,7 @@ namespace Track
                 
                 foreach (Cell cell in cells)
                 {
-                    if (cell.Verify())
+                    if (cell.Verify(transform.up))
                     {
                         if (FilterCell(cell.Segments, cells))
                         {

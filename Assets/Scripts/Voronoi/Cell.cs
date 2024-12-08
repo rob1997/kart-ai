@@ -42,17 +42,17 @@ namespace Voronoi
 
         // TODO: this shouldn't happen, it's a bug in Voronoi generation
         // where segments aren't properly calculated (center isn't within segments and segments are unusually smaller)
-        public bool Verify()
+        public bool Verify(float3 up)
         {
-            float3 previous = Utils.Cross(Segments[0].Direction, Center - Segments[0].Start).Normalize();
+            float previous = math.sign(Utils.SignedAngle(Segments[0].Direction, Center - Segments[0].Start, up));
             
             for (int i = 1; i < Segments.Length; i++)
             {
                 Segment segment = Segments[i];
                 
-                float3 current = Utils.Cross(segment.Direction, Center - segment.Start).Normalize();
+                float current = math.sign(Utils.SignedAngle(segment.Direction, Center - segment.Start, up));
                 
-                if (!previous.Equals(current))
+                if (previous - current != 0)
                 {
                     return false;
                 }

@@ -34,7 +34,13 @@ namespace Voronoi
         
         public void Generate(Transform transform)
         {
-            Generate(transform.position, transform.forward, transform.up);
+            Vector3 position = transform.position;
+            
+            position += transform.right * (planeWidth * cellSize) / 2f;
+            
+            position -= transform.forward * (planeHeight * cellSize) / 2f;
+            
+            Generate(position, transform.forward, transform.up);
         }
         
         public void Generate(Vector3 origin, Vector3 forward, Vector3 up)
