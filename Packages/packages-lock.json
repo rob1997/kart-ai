@@ -1,5 +1,14 @@
 {
   "dependencies": {
+    "com.rob1997.track-generator": {
+      "version": "file:../../TrackGenerator",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {
+        "com.unity.collections": "2.5.1",
+        "com.unity.splines": "2.6.1"
+      }
+    },
     "com.unity.barracuda": {
       "version": "3.0.0",
       "depth": 1,

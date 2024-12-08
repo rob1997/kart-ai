@@ -397,10 +397,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 439e5d7187b549138d61348ffda79078, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smoothness: 100
+  resolution: 100
   width: 0.5
   tiling: 0.75
-  cellsCount: 10
+  size: 10
   scale: 5
   complexity: 0.5
 --- !u!1 &2110808735
