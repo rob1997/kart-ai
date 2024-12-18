@@ -61,7 +61,7 @@ PrefabInstance:
     - target: {fileID: 3342870850024141990, guid: f5aa67f56956ff04791281badf4e0795,
         type: 3}
       propertyPath: m_Name
-      value: AiJeep
+      value: AiJeep_Trainng
       objectReference: {fileID: 0}
     - target: {fileID: 5186612650598012333, guid: f5aa67f56956ff04791281badf4e0795,
         type: 3}
@@ -89,7 +89,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 5186612650598012333, guid: f5aa67f56956ff04791281badf4e0795, type: 3}
+    - {fileID: 8797015407519208250, guid: f5aa67f56956ff04791281badf4e0795, type: 3}
+    - {fileID: 8797015407418815587, guid: f5aa67f56956ff04791281badf4e0795, type: 3}
+    - {fileID: 8797015407908932194, guid: f5aa67f56956ff04791281badf4e0795, type: 3}
+    - {fileID: 8797015408493100865, guid: f5aa67f56956ff04791281badf4e0795, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3342870850024141990, guid: f5aa67f56956ff04791281badf4e0795,

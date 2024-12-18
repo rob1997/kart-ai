@@ -9,12 +9,16 @@ namespace Core
     public class Simulation : MonoBehaviour
     {
         [SerializeField] private int checkpoints = 25;
+        
+        [SerializeField] private bool inference;
 
         public float ProximityThreshold => _trackGenerator.Width;
         
         private TrackGenerator _trackGenerator;
 
         private bool _initialized;
+
+        public float DistanceBetweenCheckpoints { get; private set; }
         
         public void Initialize()
         {
@@ -30,10 +34,20 @@ namespace Core
 
         public void Restart()
         {
-            _trackGenerator.GenerateVertices();
-            
-            _trackGenerator.GenerateSpline();
+            if (inference)
+            {
+                _trackGenerator.Generate();
+            }
 
+            else
+            {
+                _trackGenerator.GenerateVertices();
+            
+                _trackGenerator.GenerateSpline();
+            }
+
+            DistanceBetweenCheckpoints = _trackGenerator.Spline.GetLength() / checkpoints;
+            
 #if UNITY_EDITOR
             _drawing = true;
 #endif
@@ -49,7 +63,7 @@ namespace Core
             
             return transform.TransformPoint(position);
         }
-
+        
 #if UNITY_EDITOR
         private bool _drawing;
         

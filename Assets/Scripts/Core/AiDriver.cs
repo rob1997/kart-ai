@@ -10,12 +10,16 @@ namespace Core
         private float _lastProximity;
         
         private float _proximity;
+
+        private float _distanceBetweenCheckpoints;
         
         public override void OnEpisodeBegin()
         {
             base.OnEpisodeBegin();
 
             EvaluateProximity(true);
+            
+            _distanceBetweenCheckpoints = Simulation.DistanceBetweenCheckpoints;
         }
 
         public override void CollectObservations(VectorSensor sensor)
@@ -29,7 +33,7 @@ namespace Core
             sensor.AddObservation(transform.InverseTransformPoint(Target));
 
             // 3 Observations
-            sensor.AddObservation(Velocity);
+            sensor.AddObservation(Velocity());
 
             // 1 Observation
             sensor.AddObservation(MovementDirection());
@@ -43,8 +47,14 @@ namespace Core
             base.OnActionReceived(actions);
             
             float proximityDelta = _lastProximity - _proximity;
+
+            // 0 - 1 value, increases as you get closer to the target
+            float proximityFactor = (_distanceBetweenCheckpoints - math.clamp(_proximity, 0f, _distanceBetweenCheckpoints)) / _distanceBetweenCheckpoints;
+
+            // Higher reward as you get closer to the target
+            float reward = math.max(0f, proximityDelta * proximityFactor);
             
-            AddReward(math.max(0, proximityDelta));
+            AddReward(reward);
             
             CacheProximity();
         }
@@ -64,11 +74,16 @@ namespace Core
             _lastProximity = _proximity;
         }
         
+        private float3 Velocity()
+        {
+            return Motor.RigidBody.linearVelocity;
+        }
+        
         private float LookDirection()
         {
             float3 forward = transform.forward;
             
-            float3 velocity = Velocity.Normalize();
+            float3 velocity = Velocity().Normalize();
             
             forward.y = 0;
             
@@ -81,7 +96,7 @@ namespace Core
         {
             float3 direction = (Target - (float3) transform.position).Normalize();
             
-            float3 velocity = Velocity.Normalize();
+            float3 velocity = Velocity().Normalize();
             
             direction.y = 0;
             

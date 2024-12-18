@@ -27,38 +27,36 @@ namespace Core
 
         private int _index;
 
-        private Simulation _simulation;
+        protected Simulation Simulation { get; private set; }
 
-        private Motor _motor;
+        protected Motor Motor { get; private set; }
         
         protected float3 Target { get; private set; }
-
-        protected float3 Velocity => _motor.RigidBody.linearVelocity;
         
         public override void Initialize()
         {
             base.Initialize();
             
-            _simulation = GetComponentInParent<Simulation>();
+            Simulation = GetComponentInParent<Simulation>();
             
-            _simulation.Initialize();
+            Simulation.Initialize();
             
-            _motor = GetComponent<Motor>();
+            Motor = GetComponent<Motor>();
             
-            _motor.Initialize();
+            Motor.Initialize();
         }
         
         public override void OnEpisodeBegin()
         {
-            _simulation.Restart();
+            Simulation.Restart();
             
-            _motor.RigidBody.linearVelocity = Vector3.zero;
+            Motor.RigidBody.linearVelocity = Vector3.zero;
             
-            _motor.RigidBody.angularVelocity = Vector3.zero;
+            Motor.RigidBody.angularVelocity = Vector3.zero;
             
             _index = 0;
             
-            transform.position = _simulation.EvaluatePosition(_index);
+            transform.position = Simulation.EvaluatePosition(_index);
             
             Next();
             
@@ -76,12 +74,12 @@ namespace Core
             
             float brake = actions.DiscreteActions[0];
 
-            _motor.Drive(acceleration, direction, brake);
+            Motor.Drive(acceleration, direction, brake);
         }
         
         protected bool CheckProximityAndUpdateTarget()
         {
-            if (ProximityToTarget <= _simulation.ProximityThreshold)
+            if (ProximityToTarget <= Simulation.ProximityThreshold)
             {
                 Next();
 
@@ -95,7 +93,7 @@ namespace Core
         {
             _index++;
 
-            Target = _simulation.EvaluatePosition(_index);
+            Target = Simulation.EvaluatePosition(_index);
         }
 
 #if UNITY_EDITOR

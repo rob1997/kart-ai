@@ -1,0 +1,175 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &1841749084473100918
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1747144365922617013, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747144365922617013, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747144365922617013, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747144365922617013, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747144365922617013, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747144365922617013, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747144365922617013, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747144365922617013, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747144365922617013, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1747144365922617013, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3342870850024141990, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_Name
+      value: AiJeep_Inference
+      objectReference: {fileID: 0}
+    - target: {fileID: 5186612650598012333, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8797015407418815587, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8797015407519208250, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8797015407908932194, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8797015408493100865, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3342870850024141990, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5144340262580747116}
+    - targetCorrespondingSourceObject: {fileID: 3342870850024141990, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 513028604665516730}
+    - targetCorrespondingSourceObject: {fileID: 3342870850024141990, guid: f5aa67f56956ff04791281badf4e0795,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 666381893243941798}
+  m_SourcePrefab: {fileID: 100100000, guid: f5aa67f56956ff04791281badf4e0795, type: 3}
+--- !u!1 &4029444426452041424 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3342870850024141990, guid: f5aa67f56956ff04791281badf4e0795,
+    type: 3}
+  m_PrefabInstance: {fileID: 1841749084473100918}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-5144340262580747116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4029444426452041424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d1c4e0b1822b495aa52bc52839ecb30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BrainParameters:
+    VectorObservationSize: 9
+    NumStackedVectorObservations: 1
+    m_ActionSpec:
+      m_NumContinuousActions: 2
+      BranchSizes: 02000000
+    VectorActionSize: 
+    VectorActionDescriptions: []
+    VectorActionSpaceType: 0
+    hasUpgradedBrainParametersWithActionSpec: 1
+  m_Model: {fileID: 0}
+  m_InferenceDevice: 2
+  m_BehaviorType: 2
+  m_BehaviorName: kart
+  TeamId: 0
+  m_UseChildSensors: 1
+  m_UseChildActuators: 1
+  m_DeterministicInference: 0
+  m_ObservableAttributeHandling: 0
+--- !u!114 &513028604665516730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4029444426452041424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 883aacf2a08148fea647b20034ac336f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 50000
+--- !u!114 &666381893243941798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4029444426452041424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DecisionPeriod: 10
+  DecisionStep: 0
+  TakeActionsBetweenDecisions: 1
