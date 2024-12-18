@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 0
+    VectorObservationSize: 9
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Model: {fileID: 0}
   m_InferenceDevice: 2
   m_BehaviorType: 0
-  m_BehaviorName: kart-ai
+  m_BehaviorName: kart
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
@@ -157,7 +157,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 5000
+  MaxStep: 50000
 --- !u!114 &666381893243941798
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,6 +170,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 1
+  DecisionPeriod: 10
   DecisionStep: 0
   TakeActionsBetweenDecisions: 1

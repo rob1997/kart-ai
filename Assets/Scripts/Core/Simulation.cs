@@ -1,6 +1,5 @@
 using Track;
 using Unity.Mathematics;
-using Unity.MLAgents;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -11,7 +10,7 @@ namespace Core
     {
         [SerializeField] private int checkpoints = 25;
 
-        public float Proximity => _trackGenerator.Width;
+        public float ProximityThreshold => _trackGenerator.Width;
         
         private TrackGenerator _trackGenerator;
 
@@ -26,30 +25,19 @@ namespace Core
             
             _trackGenerator = GetComponent<TrackGenerator>();
             
-            Academy.Instance.OnEnvironmentReset += Restart;
-            
             _initialized = true;
         }
 
-        private void Restart()
+        public void Restart()
         {
             _trackGenerator.GenerateVertices();
             
             _trackGenerator.GenerateSpline();
 
 #if UNITY_EDITOR
-            if (!_drawing)
-            {
-                Drawer.Instance.OnDraw += Draw;
-
-                _drawing = true;
-            }
-        }
-
-        private bool _drawing;
-#else
-        }
+            _drawing = true;
 #endif
+        }
         
         public float3 EvaluatePosition(int index)
         {
@@ -57,19 +45,26 @@ namespace Core
             
             float t = (float) index / checkpoints;
 
-            return _trackGenerator.Spline.EvaluatePosition(t);
+            float3 position = _trackGenerator.Spline.EvaluatePosition(t);
+            
+            return transform.TransformPoint(position);
         }
 
-        private void Draw()
+#if UNITY_EDITOR
+        private bool _drawing;
+        
+        private void OnDrawGizmosSelected()
         {
-            for (int i = 0; i < checkpoints; i++)
+            if (_drawing)
             {
-                float3 position = _trackGenerator.Spline.EvaluatePosition((float) i / checkpoints);
+                for (int i = 0; i < checkpoints; i++)
+                {
+                    Gizmos.color = Color.green;
                 
-                Gizmos.color = Color.green;
-                
-                Gizmos.DrawWireSphere(position, Proximity);
+                    Gizmos.DrawWireSphere(EvaluatePosition(i), ProximityThreshold);
+                }
             }
         }
+#endif
     }
 }

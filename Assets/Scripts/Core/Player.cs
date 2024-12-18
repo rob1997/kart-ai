@@ -37,5 +37,10 @@ namespace Core
 
             actionsOut.DiscreteActions.Array[0] = _brake ? 1 : 0;
         }
+
+        private void LateUpdate()
+        {
+            CheckProximityAndUpdateTarget();
+        }
     }
 }

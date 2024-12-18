@@ -8,50 +8,65 @@ namespace Core
     [RequireComponent(typeof(Motor))]
     public class Driver : Agent
     {
-        protected int Index { get; private set; }
+        // Distance to Target
+        protected float ProximityToTarget
+        {
+            get
+            {
+                float3 position = transform.position;
+                
+                float3 target = Target;
+                
+                position.y = 0;
+                
+                target.y = 0;
+                
+                return math.distance(position, target);
+            }
+        }
 
+        private int _index;
+
+        private Simulation _simulation;
+
+        private Motor _motor;
+        
         protected float3 Target { get; private set; }
 
-        protected float3 Position => Motor.RigidBody.position;
-
-        protected Motor Motor { get; private set; }
-
-        protected Simulation Simulation { get; private set; }
+        protected float3 Velocity => _motor.RigidBody.linearVelocity;
         
         public override void Initialize()
         {
             base.Initialize();
             
-            Simulation = GetComponentInParent<Simulation>();
+            _simulation = GetComponentInParent<Simulation>();
             
-            Simulation.Initialize();
+            _simulation.Initialize();
             
-            Motor = GetComponent<Motor>();
+            _motor = GetComponent<Motor>();
             
-            Motor.Initialize();
+            _motor.Initialize();
         }
         
         public override void OnEpisodeBegin()
         {
-            Index = 0;
+            _simulation.Restart();
             
-            Motor.transform.position = Simulation.EvaluatePosition(Index);
+            _motor.RigidBody.linearVelocity = Vector3.zero;
+            
+            _motor.RigidBody.angularVelocity = Vector3.zero;
+            
+            _index = 0;
+            
+            transform.position = _simulation.EvaluatePosition(_index);
             
             Next();
             
 #if UNITY_EDITOR
-            if (!_drawing)
-            {
-                Drawer.Instance.OnDraw += Draw;
-
-                _drawing = true;
-            }
-        }
-
-        private bool _drawing;
-#else
-        }
+            _drawing = true;
 #endif
+        }
+
         
         public override void OnActionReceived(ActionBuffers actions)
         {
@@ -61,31 +76,40 @@ namespace Core
             
             float brake = actions.DiscreteActions[0];
 
-            Motor.Drive(acceleration, direction, brake);
+            _motor.Drive(acceleration, direction, brake);
         }
         
-        private void LateUpdate()
+        protected bool CheckProximityAndUpdateTarget()
         {
-            float distance = math.distance(Position, Target);
-
-            if (distance <= Simulation.Proximity)
+            if (ProximityToTarget <= _simulation.ProximityThreshold)
             {
                 Next();
+
+                return true;
             }
+
+            return false;
         }
 
         private void Next()
         {
-            Index++;
+            _index++;
 
-            Target = Simulation.EvaluatePosition(Index);
+            Target = _simulation.EvaluatePosition(_index);
         }
+
+#if UNITY_EDITOR
+        private bool _drawing;
         
-        private void Draw()
+        private void OnDrawGizmosSelected()
         {
-            Gizmos.color = Color.red;
+            if (_drawing)
+            {
+                Gizmos.color = Color.red;
             
-            Gizmos.DrawLine(Position, Target);
+                Gizmos.DrawLine(transform.position, Target);
+            }
         }
+#endif
     }
 }
