@@ -8,11 +8,17 @@ namespace Core
     [RequireComponent(typeof(TrackGenerator))]
     public class Simulation : MonoBehaviour
     {
-        [SerializeField] private int checkpoints = 25;
-        
         [SerializeField] private bool inference;
+        
+        [Space]
+        
+        [SerializeField] private int checkpoints = 25;
 
-        public float ProximityThreshold => _trackGenerator.Width;
+        [SerializeField, Range(0f, 1f)] private float normalizedProximityRange = 0.25f;
+
+        public float TrackWidth => _trackGenerator.Width;
+
+        public float ProximityRange => normalizedProximityRange * TrackWidth;
         
         private TrackGenerator _trackGenerator;
 
@@ -67,6 +73,8 @@ namespace Core
 #if UNITY_EDITOR
         private bool _drawing;
         
+        [SerializeField] private float targetRadius = 0.5f;
+        
         private void OnDrawGizmosSelected()
         {
             if (_drawing)
@@ -75,7 +83,7 @@ namespace Core
                 {
                     Gizmos.color = Color.green;
                 
-                    Gizmos.DrawWireSphere(EvaluatePosition(i), ProximityThreshold);
+                    Gizmos.DrawSphere(EvaluatePosition(i), targetRadius);
                 }
             }
         }

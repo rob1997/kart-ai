@@ -2,36 +2,26 @@ using Unity.Mathematics;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using UnityEngine;
+using Voronoi;
 
 namespace Core
 {
     [RequireComponent(typeof(Motor))]
     public class Driver : Agent
     {
-        // Distance to Target
-        protected float ProximityToTarget
-        {
-            get
-            {
-                float3 position = transform.position;
-                
-                float3 target = Target;
-                
-                position.y = 0;
-                
-                target.y = 0;
-                
-                return math.distance(position, target);
-            }
-        }
-
-        private int _index;
-
+        protected int Index { get; private set; }
+        
         protected Simulation Simulation { get; private set; }
 
         protected Motor Motor { get; private set; }
         
         protected float3 Target { get; private set; }
+
+        private float3 _right;
+        
+        private float3 _pointL;
+        
+        private float3 _pointR;
         
         public override void Initialize()
         {
@@ -54,9 +44,9 @@ namespace Core
             
             Motor.RigidBody.angularVelocity = Vector3.zero;
             
-            _index = 0;
+            Index = 0;
             
-            transform.position = Simulation.EvaluatePosition(_index);
+            transform.position = Simulation.EvaluatePosition(Index);
             
             Next();
             
@@ -79,7 +69,7 @@ namespace Core
         
         protected bool CheckProximityAndUpdateTarget()
         {
-            if (ProximityToTarget <= Simulation.ProximityThreshold)
+            if (ProximityToTarget() <= Simulation.ProximityRange)
             {
                 Next();
 
@@ -89,11 +79,57 @@ namespace Core
             return false;
         }
 
+        private float ProximityToTarget()
+        {
+            float3 position = transform.position;
+            
+            position.y = 0;
+            
+            float3 directionL = position - _pointL;
+            
+            float3 directionR = position - _pointR;
+            
+            float angleL = Voronoi.Utils.Angle(_right, directionL);
+            
+            float angleR = Voronoi.Utils.Angle(- _right, directionR);
+
+            if (angleL < 90 && angleR < 90)
+            {
+                return math.length(directionL) * math.sin(angleL * math.TORADIANS);
+            }
+
+            if (angleL >= 90)
+            {
+                return math.distance(position, _pointL);
+            }
+
+            return math.distance(position, _pointR);
+        }
+        
         private void Next()
         {
-            _index++;
+            Index++;
 
-            Target = Simulation.EvaluatePosition(_index);
+            Target = Simulation.EvaluatePosition(Index);
+            
+            //Re-calculate proximity values
+            float3 forward = Simulation.EvaluatePosition(Index + 1) - Target;
+
+            forward.y = 0;
+
+            forward = forward.Normalize();
+            
+            _right = math.cross(forward, Simulation.transform.up);
+
+            _right = _right.Normalize() * Simulation.TrackWidth;
+            
+            _pointR = Target + _right;
+            
+            _pointL = Target - _right;
+            
+            _pointR.y = _pointL.y = 0;
+            
+            _right = _right.Normalize();
         }
 
 #if UNITY_EDITOR

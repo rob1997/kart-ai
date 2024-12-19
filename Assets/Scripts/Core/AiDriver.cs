@@ -40,6 +40,9 @@ namespace Core
             
             // 1 Observation
             sensor.AddObservation(LookDirection());
+            
+            // 1 Observation
+            sensor.AddObservation(NextTurn());
         }
 
         public override void OnActionReceived(ActionBuffers actions)
@@ -61,7 +64,13 @@ namespace Core
 
         private void EvaluateProximity(bool @override = false)
         {
-            _proximity = ProximityToTarget;
+            float3 target = Target;
+
+            float3 position = transform.position;
+            
+            target.y = position.y = 0;
+            
+            _proximity = math.distance(target, position);
             
             if (@override || CheckProximityAndUpdateTarget())
             {
@@ -103,6 +112,15 @@ namespace Core
             velocity.y = 0;
             
             return math.dot(velocity, direction);
+        }
+
+        private float NextTurn()
+        {
+            float3 direction = Target - (float3) transform.position;
+
+            float3 nextDirection = Simulation.EvaluatePosition(Index + 1) - Target;
+            
+            return Voronoi.Utils.SignedAngle(direction, nextDirection, Simulation.transform.up) / 180f;
         }
     }
 }

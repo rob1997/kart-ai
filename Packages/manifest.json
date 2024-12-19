@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "com.rob1997.track-generator": "file:../../TrackGenerator",
+    "com.unity.cinemachine": "3.1.2",
     "com.unity.collab-proxy": "2.5.2",
     "com.unity.collections": "2.5.1",
     "com.unity.ide.rider": "3.0.31",
