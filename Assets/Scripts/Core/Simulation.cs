@@ -14,12 +14,10 @@ namespace Core
         
         [SerializeField] private int checkpoints = 25;
 
-        [SerializeField, Range(0f, 1f)] private float normalizedProximityRange = 0.25f;
+        [field: SerializeField] public float ProximityPadding { get; private set; } = 3f;
 
         public float TrackWidth => _trackGenerator.Width;
 
-        public float ProximityRange => normalizedProximityRange * TrackWidth;
-        
         private TrackGenerator _trackGenerator;
 
         private bool _initialized;

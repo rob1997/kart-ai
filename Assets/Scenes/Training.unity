@@ -159,8 +159,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b697a5f1a41345bd9394c85d8b7f86fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  checkpoints: 50
   inference: 0
+  checkpoints: 50
+  <ProximityPadding>k__BackingField: 3
+  targetRadius: 0.5
 --- !u!114 &143310849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,6 +299,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1331093788}
     m_Modifications:
+    - target: {fileID: 5130438210758160913, guid: 8de6ae26067358b48a18f396feecc4f9,
+        type: 3}
+      propertyPath: m_Name
+      value: AiJeep_training
+      objectReference: {fileID: 0}
     - target: {fileID: 8172242795730452482, guid: 8de6ae26067358b48a18f396feecc4f9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -347,11 +354,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5130438210758160913, guid: 8de6ae26067358b48a18f396feecc4f9,
-        type: 3}
-      propertyPath: m_Name
-      value: AiJeep_training
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -390,8 +392,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b697a5f1a41345bd9394c85d8b7f86fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  checkpoints: 50
   inference: 0
+  checkpoints: 50
+  <ProximityPadding>k__BackingField: 3
+  targetRadius: 0.5
 --- !u!114 &160433021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -553,8 +557,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b697a5f1a41345bd9394c85d8b7f86fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  checkpoints: 50
   inference: 0
+  checkpoints: 50
+  <ProximityPadding>k__BackingField: 3
+  targetRadius: 0.5
 --- !u!114 &237892292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -754,6 +760,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 809575916}
     m_Modifications:
+    - target: {fileID: 5130438210758160913, guid: 8de6ae26067358b48a18f396feecc4f9,
+        type: 3}
+      propertyPath: m_Name
+      value: AiJeep_training
+      objectReference: {fileID: 0}
     - target: {fileID: 8172242795730452482, guid: 8de6ae26067358b48a18f396feecc4f9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -803,11 +814,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5130438210758160913, guid: 8de6ae26067358b48a18f396feecc4f9,
-        type: 3}
-      propertyPath: m_Name
-      value: AiJeep_training
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -822,6 +828,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1992736280}
     m_Modifications:
+    - target: {fileID: 5130438210758160913, guid: 8de6ae26067358b48a18f396feecc4f9,
+        type: 3}
+      propertyPath: m_Name
+      value: AiJeep_training
+      objectReference: {fileID: 0}
     - target: {fileID: 8172242795730452482, guid: 8de6ae26067358b48a18f396feecc4f9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -871,11 +882,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5130438210758160913, guid: 8de6ae26067358b48a18f396feecc4f9,
-        type: 3}
-      propertyPath: m_Name
-      value: AiJeep_training
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1113,6 +1119,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1332911831}
     m_Modifications:
+    - target: {fileID: 5130438210758160913, guid: 8de6ae26067358b48a18f396feecc4f9,
+        type: 3}
+      propertyPath: m_Name
+      value: AiJeep_training
+      objectReference: {fileID: 0}
     - target: {fileID: 8172242795730452482, guid: 8de6ae26067358b48a18f396feecc4f9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1163,11 +1174,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5130438210758160913, guid: 8de6ae26067358b48a18f396feecc4f9,
-        type: 3}
-      propertyPath: m_Name
-      value: AiJeep_training
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1206,8 +1212,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b697a5f1a41345bd9394c85d8b7f86fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  checkpoints: 50
   inference: 0
+  checkpoints: 50
+  <ProximityPadding>k__BackingField: 3
+  targetRadius: 0.5
 --- !u!114 &809575912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1413,6 +1421,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 160433025}
     m_Modifications:
+    - target: {fileID: 5130438210758160913, guid: 8de6ae26067358b48a18f396feecc4f9,
+        type: 3}
+      propertyPath: m_Name
+      value: AiJeep_training
+      objectReference: {fileID: 0}
     - target: {fileID: 8172242795730452482, guid: 8de6ae26067358b48a18f396feecc4f9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1462,11 +1475,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5130438210758160913, guid: 8de6ae26067358b48a18f396feecc4f9,
-        type: 3}
-      propertyPath: m_Name
-      value: AiJeep_training
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1581,8 +1589,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b697a5f1a41345bd9394c85d8b7f86fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  checkpoints: 50
   inference: 0
+  checkpoints: 50
+  <ProximityPadding>k__BackingField: 3
+  targetRadius: 0.5
 --- !u!114 &1331093784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1744,8 +1754,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b697a5f1a41345bd9394c85d8b7f86fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  checkpoints: 50
   inference: 0
+  checkpoints: 50
+  <ProximityPadding>k__BackingField: 3
+  targetRadius: 0.5
 --- !u!114 &1332911827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2079,8 +2091,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b697a5f1a41345bd9394c85d8b7f86fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  checkpoints: 50
   inference: 0
+  checkpoints: 50
+  <ProximityPadding>k__BackingField: 3
+  targetRadius: 0.5
 --- !u!1001 &1434490022
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2089,6 +2103,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 237892296}
     m_Modifications:
+    - target: {fileID: 5130438210758160913, guid: 8de6ae26067358b48a18f396feecc4f9,
+        type: 3}
+      propertyPath: m_Name
+      value: AiJeep_training
+      objectReference: {fileID: 0}
     - target: {fileID: 8172242795730452482, guid: 8de6ae26067358b48a18f396feecc4f9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2138,11 +2157,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5130438210758160913, guid: 8de6ae26067358b48a18f396feecc4f9,
-        type: 3}
-      propertyPath: m_Name
-      value: AiJeep_training
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2389,8 +2403,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b697a5f1a41345bd9394c85d8b7f86fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  checkpoints: 50
   inference: 0
+  checkpoints: 50
+  <ProximityPadding>k__BackingField: 3
+  targetRadius: 0.5
 --- !u!114 &1992736276
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2527,6 +2543,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143310853}
     m_Modifications:
+    - target: {fileID: 5130438210758160913, guid: 8de6ae26067358b48a18f396feecc4f9,
+        type: 3}
+      propertyPath: m_Name
+      value: AiJeep_training
+      objectReference: {fileID: 0}
     - target: {fileID: 8172242795730452482, guid: 8de6ae26067358b48a18f396feecc4f9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2576,11 +2597,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5130438210758160913, guid: 8de6ae26067358b48a18f396feecc4f9,
-        type: 3}
-      propertyPath: m_Name
-      value: AiJeep_training
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2672,8 +2688,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2110808735}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 25, y: 25, z: -100}
+  m_LocalRotation: {x: 0.70710665, y: -0, z: -0, w: 0.70710695}
+  m_LocalPosition: {x: 0, y: 200, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

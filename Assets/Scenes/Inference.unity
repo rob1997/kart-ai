@@ -369,7 +369,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Model
       value: 
-      objectReference: {fileID: 5022602860645237092, guid: 91c78c56e8752ac47ab062f7a7323f3d,
+      objectReference: {fileID: 5022602860645237092, guid: b0bd85ba44a3cad4499523eaa4e318a0,
         type: 3}
     - target: {fileID: 121649432030547139, guid: 7482436c75b744743990ce80fb4451f7,
         type: 3}
@@ -644,7 +644,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inference: 1
   checkpoints: 50
-  normalizedProximityRange: 0.25
+  <ProximityPadding>k__BackingField: 3
   targetRadius: 0.5
 --- !u!1 &1601306428
 GameObject:

@@ -116,11 +116,13 @@ namespace Core
 
         private float NextTurn()
         {
-            float3 direction = Target - (float3) transform.position;
+            float3 velocity = Velocity();
 
+            velocity.y = 0;
+            
             float3 nextDirection = Simulation.EvaluatePosition(Index + 1) - Target;
             
-            return Voronoi.Utils.SignedAngle(direction, nextDirection, Simulation.transform.up) / 180f;
+            return Voronoi.Utils.SignedAngle(velocity, nextDirection, Simulation.transform.up) / 180f;
         }
     }
 }

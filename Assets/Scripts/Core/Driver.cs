@@ -22,6 +22,8 @@ namespace Core
         private float3 _pointL;
         
         private float3 _pointR;
+
+        private bool _inTrack;
         
         public override void Initialize()
         {
@@ -69,21 +71,20 @@ namespace Core
         
         protected bool CheckProximityAndUpdateTarget()
         {
-            if (ProximityToTarget() <= Simulation.ProximityRange)
-            {
-                Next();
-
-                return true;
-            }
-
-            return false;
-        }
-
-        private float ProximityToTarget()
-        {
             float3 position = transform.position;
             
-            position.y = 0;
+            float3 target = Target;
+            
+            position.y = target.y = 0;
+
+            float3 direction = position - target;
+            
+            if (_inTrack && math.cross(direction, _right).y > 0)
+            {
+                Next();
+                
+                return true;
+            }
             
             float3 directionL = position - _pointL;
             
@@ -93,17 +94,9 @@ namespace Core
             
             float angleR = Voronoi.Utils.Angle(- _right, directionR);
 
-            if (angleL < 90 && angleR < 90)
-            {
-                return math.length(directionL) * math.sin(angleL * math.TORADIANS);
-            }
-
-            if (angleL >= 90)
-            {
-                return math.distance(position, _pointL);
-            }
-
-            return math.distance(position, _pointR);
+            _inTrack = angleL < 90 && angleR < 90;
+            
+            return false;
         }
         
         private void Next()
@@ -113,7 +106,7 @@ namespace Core
             Target = Simulation.EvaluatePosition(Index);
             
             //Re-calculate proximity values
-            float3 forward = Simulation.EvaluatePosition(Index + 1) - Target;
+            float3 forward = Simulation.EvaluatePosition(Index - 1) - Target;
 
             forward.y = 0;
 
@@ -121,15 +114,13 @@ namespace Core
             
             _right = math.cross(forward, Simulation.transform.up);
 
-            _right = _right.Normalize() * Simulation.TrackWidth;
+            _right = _right.Normalize() * (Simulation.TrackWidth + Simulation.ProximityPadding);
             
             _pointR = Target + _right;
             
             _pointL = Target - _right;
             
-            _pointR.y = _pointL.y = 0;
-            
-            _right = _right.Normalize();
+            _right.y = _pointR.y = _pointL.y = 0;
         }
 
 #if UNITY_EDITOR
@@ -142,6 +133,14 @@ namespace Core
                 Gizmos.color = Color.red;
             
                 Gizmos.DrawLine(transform.position, Target);
+
+                Gizmos.color = Color.blue;
+
+                float3 pointL = Simulation.transform.TransformPoint(_pointL);
+                
+                float3 pointR = Simulation.transform.TransformPoint(_pointR);
+                
+                Gizmos.DrawLine(pointL, pointR);
             }
         }
 #endif
