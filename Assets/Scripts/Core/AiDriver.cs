@@ -70,13 +70,7 @@ namespace Core
 
         private void EvaluateProximity(bool @override = false)
         {
-            float3 target = Target;
-
-            float3 position = transform.position;
-            
-            target.y = position.y = 0;
-            
-            _proximity = math.distance(target, position);
+            _proximity = Proximity();
             
             if (@override || CheckProximityAndUpdateTarget())
             {

@@ -25,6 +25,8 @@ namespace Core
 
         private bool _inTrack;
         
+        private int _side;
+        
         public override void Initialize()
         {
             base.Initialize();
@@ -79,9 +81,9 @@ namespace Core
 
             float3 direction = position - target;
 
-            float side = math.cross(direction, _right).y;
+            int side = (int) math.cross(direction, _right).Normalize().y;
             
-            if (_inTrack && side > 0)
+            if (_inTrack && side != _side)
             {
                 Next();
                 
@@ -96,7 +98,9 @@ namespace Core
             
             float angleR = Voronoi.Utils.Angle(- _right, directionR);
 
-            _inTrack = angleL < 90 && angleR < 90 && side <= 0;
+            _inTrack = angleL < 90 && angleR < 90;
+
+            _side = side;
             
             return false;
         }
@@ -123,8 +127,37 @@ namespace Core
             _pointL = Target - _right;
             
             _right.y = _pointR.y = _pointL.y = 0;
+
+            _side = - 1;
         }
 
+        protected float Proximity()
+        {
+            float3 position = transform.position;
+
+            position.y = 0;
+            
+            float3 directionL = position - _pointL;
+            
+            float3 directionR = position - _pointR;
+            
+            float angleL = Voronoi.Utils.Angle(_right, directionL);
+            
+            float angleR = Voronoi.Utils.Angle(- _right, directionR);
+
+            if (angleL < 90 && angleR < 90)
+            {
+                return math.length(directionL) * math.sin(angleL * math.TORADIANS);
+            }
+
+            if (angleL >= 90)
+            {
+                return math.distance(_pointL, position);
+            }
+            
+            return math.distance(_pointR, position);
+        }
+        
 #if UNITY_EDITOR
         private bool _drawing;
         
