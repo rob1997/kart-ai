@@ -48,6 +48,8 @@ namespace Core
         public override void OnActionReceived(ActionBuffers actions)
         {
             base.OnActionReceived(actions);
+
+            float reward = 0;
             
             float proximityDelta = _lastProximity - _proximity;
 
@@ -55,7 +57,11 @@ namespace Core
             float proximityFactor = (_distanceBetweenCheckpoints - math.clamp(_proximity, 0f, _distanceBetweenCheckpoints)) / _distanceBetweenCheckpoints;
 
             // Higher reward as you get closer to the target
-            float reward = math.max(0f, proximityDelta * proximityFactor);
+            reward += math.max(0f, proximityDelta * proximityFactor);
+            
+            float lookDirection = LookDirection();
+
+            reward += reward * math.clamp(lookDirection, 0, 1);
             
             AddReward(reward);
             
@@ -92,26 +98,26 @@ namespace Core
         {
             float3 forward = transform.forward;
             
-            float3 velocity = Velocity().Normalize();
+            float3 velocity = Velocity();
             
             forward.y = 0;
             
             velocity.y = 0;
             
-            return math.dot(velocity, forward);
+            return math.dot(velocity.Normalize(), forward.Normalize());
         }
         
         private float MovementDirection()
         {
-            float3 direction = (Target - (float3) transform.position).Normalize();
+            float3 direction = Target - (float3) transform.position;
             
-            float3 velocity = Velocity().Normalize();
+            float3 velocity = Velocity();
             
             direction.y = 0;
             
             velocity.y = 0;
             
-            return math.dot(velocity, direction);
+            return math.dot(velocity.Normalize(), direction.Normalize());
         }
 
         private float NextTurn()

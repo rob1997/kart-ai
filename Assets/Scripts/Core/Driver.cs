@@ -78,8 +78,10 @@ namespace Core
             position.y = target.y = 0;
 
             float3 direction = position - target;
+
+            float side = math.cross(direction, _right).y;
             
-            if (_inTrack && math.cross(direction, _right).y > 0)
+            if (_inTrack && side > 0)
             {
                 Next();
                 
@@ -94,7 +96,7 @@ namespace Core
             
             float angleR = Voronoi.Utils.Angle(- _right, directionR);
 
-            _inTrack = angleL < 90 && angleR < 90;
+            _inTrack = angleL < 90 && angleR < 90 && side <= 0;
             
             return false;
         }
