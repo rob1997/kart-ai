@@ -40,7 +40,7 @@ namespace Core
 
         private void LateUpdate()
         {
-            CheckProximityAndUpdateTarget();
+            CheckAndUpdateTarget();
         }
     }
 }

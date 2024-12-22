@@ -17,7 +17,9 @@ namespace Core
         {
             base.OnEpisodeBegin();
 
-            EvaluateProximity(true);
+            EvaluateProximity();
+            
+            CacheProximity();
             
             _distanceBetweenCheckpoints = Simulation.DistanceBetweenCheckpoints;
         }
@@ -50,7 +52,7 @@ namespace Core
             base.OnActionReceived(actions);
 
             float reward = 0;
-            
+
             float proximityDelta = _lastProximity - _proximity;
 
             // 0 - 1 value, increases as you get closer to the target
@@ -63,19 +65,21 @@ namespace Core
 
             reward += reward * math.clamp(lookDirection, 0, 1);
             
+            if (CheckAndUpdateTarget())
+            {
+                reward += 1;
+                
+                EvaluateProximity();
+            }
+            
             AddReward(reward);
             
             CacheProximity();
         }
 
-        private void EvaluateProximity(bool @override = false)
+        private void EvaluateProximity()
         {
             _proximity = Proximity();
-            
-            if (@override || CheckProximityAndUpdateTarget())
-            {
-                CacheProximity();
-            }
         }
 
         private void CacheProximity()

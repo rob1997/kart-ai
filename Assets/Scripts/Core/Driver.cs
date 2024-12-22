@@ -71,7 +71,7 @@ namespace Core
             Motor.Drive(acceleration, direction, brake);
         }
         
-        protected bool CheckProximityAndUpdateTarget()
+        protected bool CheckAndUpdateTarget()
         {
             float3 position = transform.position;
             
