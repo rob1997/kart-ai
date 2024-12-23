@@ -45,6 +45,12 @@ namespace Core
             
             // 1 Observation
             sensor.AddObservation(NextTurn());
+
+            // 1 Observation
+            sensor.AddObservation(_distanceBetweenCheckpoints);
+            
+            // 1 Observation
+            sensor.AddObservation(Motor.RigidBody.linearVelocity.magnitude);
         }
 
         public override void OnActionReceived(ActionBuffers actions)
@@ -120,13 +126,15 @@ namespace Core
 
         private float NextTurn()
         {
-            float3 velocity = Velocity();
+            float3 direction = Velocity();
 
-            velocity.y = 0;
-            
+            direction.y = 0;
+
             float3 nextDirection = Simulation.EvaluatePosition(Index + 1) - Target;
+
+            nextDirection.y = 0;
             
-            return Voronoi.Utils.SignedAngle(velocity, nextDirection, Simulation.transform.up) / 180f;
+            return Voronoi.Utils.SignedAngle(direction, nextDirection, Simulation.transform.up) / 180f;
         }
     }
 }
