@@ -11,8 +11,6 @@ namespace Core
         
         private float _proximity;
 
-        private float _distanceBetweenCheckpoints;
-        
         public override void OnEpisodeBegin()
         {
             base.OnEpisodeBegin();
@@ -20,8 +18,6 @@ namespace Core
             EvaluateProximity();
             
             CacheProximity();
-            
-            _distanceBetweenCheckpoints = Simulation.DistanceBetweenCheckpoints;
         }
 
         public override void CollectObservations(VectorSensor sensor)
@@ -44,13 +40,16 @@ namespace Core
             sensor.AddObservation(LookDirection());
             
             // 1 Observation
+             sensor.AddObservation(TrackDirection());
+            
+            // 1 Observation
             sensor.AddObservation(NextTurn());
 
             // 1 Observation
-            sensor.AddObservation(_distanceBetweenCheckpoints);
+            sensor.AddObservation(NextDistance());
             
             // 1 Observation
-            sensor.AddObservation(Motor.RigidBody.linearVelocity.magnitude);
+            sensor.AddObservation(Speed());
         }
 
         public override void OnActionReceived(ActionBuffers actions)
@@ -61,15 +60,27 @@ namespace Core
 
             float proximityDelta = _lastProximity - _proximity;
 
+            // Distance between checkpoints
+            float distance = Distance();
+            
             // 0 - 1 value, increases as you get closer to the target
-            float proximityFactor = (_distanceBetweenCheckpoints - math.clamp(_proximity, 0f, _distanceBetweenCheckpoints)) / _distanceBetweenCheckpoints;
+            float proximityFactor = (distance - math.clamp(_proximity, 0f, distance)) / distance;
 
             // Higher reward as you get closer to the target
             reward += math.max(0f, proximityDelta * proximityFactor);
             
+            float trackDirection = TrackDirection();
+            
+            reward += reward * math.clamp(trackDirection, 0, 1);
+            
             float lookDirection = LookDirection();
 
             reward += reward * math.clamp(lookDirection, 0, 1);
+
+            // higher reward for faster velocity towards target
+            float speedFactor = (math.max(0, MovementDirection()) * Speed()) / Motor.MaxSpeed;
+            
+            reward += reward * math.clamp(speedFactor, 0, 1);
             
             if (CheckAndUpdateTarget())
             {
@@ -95,7 +106,27 @@ namespace Core
         
         private float3 Velocity()
         {
-            return Motor.RigidBody.linearVelocity;
+            float3 velocity = Motor.RigidBody.linearVelocity;
+            
+            velocity.y = 0;
+            
+            return velocity;
+        }
+        
+        private float Speed()
+        {
+            return math.length(Velocity());
+        }
+        
+        private float TrackDirection()
+        {
+            float3 direction = (float3) transform.position - Target;
+            
+            float3 roadDirection = Simulation.EvaluatePosition(Index - 1) - Target;
+            
+            direction.y = roadDirection.y = 0;
+
+            return math.dot(direction.Normalize(), roadDirection.Normalize());
         }
         
         private float LookDirection()
@@ -105,8 +136,6 @@ namespace Core
             float3 velocity = Velocity();
             
             forward.y = 0;
-            
-            velocity.y = 0;
             
             return math.dot(velocity.Normalize(), forward.Normalize());
         }
@@ -118,9 +147,7 @@ namespace Core
             float3 velocity = Velocity();
             
             direction.y = 0;
-            
-            velocity.y = 0;
-            
+
             return math.dot(velocity.Normalize(), direction.Normalize());
         }
 
@@ -128,13 +155,33 @@ namespace Core
         {
             float3 direction = Velocity();
 
-            direction.y = 0;
-
             float3 nextDirection = Simulation.EvaluatePosition(Index + 1) - Target;
 
             nextDirection.y = 0;
             
             return Voronoi.Utils.SignedAngle(direction, nextDirection, Simulation.transform.up) / 180f;
+        }
+        
+        private float NextDistance()
+        {
+            float3 current = Target;
+            
+            float3 next = Simulation.EvaluatePosition(Index + 1);
+
+            current.y = next.y = 0;
+            
+            return math.distance(current, next);
+        }
+        
+        private float Distance()
+        {
+            float3 current = Target;
+            
+            float3 previous = Simulation.EvaluatePosition(Index - 1);
+
+            current.y = previous.y = 0;
+            
+            return math.distance(previous, current);
         }
     }
 }

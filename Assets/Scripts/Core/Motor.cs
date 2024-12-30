@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -11,9 +12,10 @@ namespace Core
 
         [Space]
 
-        //wheel rotation force
-        [SerializeField]
-        private float torque = 200f;
+        [SerializeField] private float maxSpeed = 20f;
+        
+        //maximum wheel rotation force
+        [SerializeField] private float maxTorque = 200f;
 
         //max steer angle of front wheels
         [SerializeField] private float maxSteerAngle = 30f;
@@ -36,6 +38,8 @@ namespace Core
         //car rigid-body
         public Rigidbody RigidBody { get; private set; }
 
+        public float MaxSpeed => maxSpeed;
+        
         public void Initialize()
         {
             RigidBody = GetComponent<Rigidbody>();
@@ -75,11 +79,11 @@ namespace Core
             GroundWheels(_backWheels[0], _backWheels[1]);
         }
 
-        public void Drive(float acceleration, float direction, float brake)
+        public void Drive(float gas, float steer, float brake)
         {
-            acceleration = acceleration.BiDirectionalNormalizedClamp();
+            gas = gas.BiDirectionalNormalizedClamp();
 
-            direction = direction.BiDirectionalNormalizedClamp();
+            steer = steer.BiDirectionalNormalizedClamp();
 
             brake = brake.NormalizedClamp();
 
@@ -88,7 +92,7 @@ namespace Core
                 var wheel = _wheels[i];
 
                 //apply torque
-                wheel.motorTorque = acceleration * torque;
+                wheel.motorTorque = gas * Torque();
 
                 //apply brake
                 wheel.brakeTorque = brake * maxBrakeTorque;
@@ -96,7 +100,7 @@ namespace Core
                 if (wheel.IsFrontWheel(centerOfMass))
                 {
                     //steer front wheels based on direction value
-                    wheel.steerAngle = direction * maxSteerAngle;
+                    wheel.steerAngle = steer * maxSteerAngle;
                 }
 
                 //rotate wheel mesh
@@ -110,6 +114,16 @@ namespace Core
                     meshContainer.rotation = rotation;
                 }
             }
+        }
+        
+        private float Torque()
+        {
+            float speed = math.length(RigidBody.linearVelocity);
+
+            float normalizedSpeed = math.clamp(speed / maxSpeed, 0, 1);
+            
+            // the closer it gets to its maximum speed the more we decrease torque
+            return math.lerp(maxTorque, 0, normalizedSpeed);
         }
 
         /// <summary>

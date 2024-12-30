@@ -383,6 +383,7 @@ Transform:
   m_Children:
   - {fileID: 1601306431}
   - {fileID: 367183675}
+  - {fileID: 1431093691}
   - {fileID: 1906063238}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -513,6 +514,86 @@ MonoBehaviour:
   checkpoints: 50
   <ProximityPadding>k__BackingField: 3
   targetRadius: 0.5
+--- !u!1001 &1431093690
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1412316452}
+    m_Modifications:
+    - target: {fileID: -5144340262580747116, guid: 7482436c75b744743990ce80fb4451f7,
+        type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: 1285ce1ea62afb14dbee32dfc9ebe24b,
+        type: 3}
+    - target: {fileID: 121649432030547139, guid: 7482436c75b744743990ce80fb4451f7,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 121649432030547139, guid: 7482436c75b744743990ce80fb4451f7,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 121649432030547139, guid: 7482436c75b744743990ce80fb4451f7,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 121649432030547139, guid: 7482436c75b744743990ce80fb4451f7,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 121649432030547139, guid: 7482436c75b744743990ce80fb4451f7,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 121649432030547139, guid: 7482436c75b744743990ce80fb4451f7,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 121649432030547139, guid: 7482436c75b744743990ce80fb4451f7,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 121649432030547139, guid: 7482436c75b744743990ce80fb4451f7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 121649432030547139, guid: 7482436c75b744743990ce80fb4451f7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 121649432030547139, guid: 7482436c75b744743990ce80fb4451f7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4029444426452041424, guid: 7482436c75b744743990ce80fb4451f7,
+        type: 3}
+      propertyPath: m_Name
+      value: AiJeep_Inference
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7482436c75b744743990ce80fb4451f7, type: 3}
+--- !u!4 &1431093691 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 121649432030547139, guid: 7482436c75b744743990ce80fb4451f7,
+    type: 3}
+  m_PrefabInstance: {fileID: 1431093690}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1601306428
 GameObject:
   m_ObjectHideFlags: 0

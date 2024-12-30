@@ -62,13 +62,13 @@ namespace Core
         
         public override void OnActionReceived(ActionBuffers actions)
         {
-            float acceleration = actions.ContinuousActions[0];
+            float gas = actions.ContinuousActions[0];
             
-            float direction = actions.ContinuousActions[1];
+            float steer = actions.ContinuousActions[1];
             
             float brake = actions.DiscreteActions[0];
 
-            Motor.Drive(acceleration, direction, brake);
+            Motor.Drive(gas, steer, brake);
         }
         
         protected bool CheckAndUpdateTarget()

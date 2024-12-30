@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 3342870850024141984}
   - component: {fileID: 3342870850024141986}
   - component: {fileID: 3342870850024141991}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Jeep
   m_TagString: Vehicle
   m_Icon: {fileID: 0}
@@ -111,7 +111,7 @@ Rigidbody:
   m_GameObject: {fileID: 3342870850024141990}
   serializedVersion: 4
   m_Mass: 1000
-  m_Drag: 0
+  m_Drag: 0.05
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -142,7 +142,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -163,7 +163,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   centerOfMass: {fileID: 8797015408601118028}
-  torque: 200
+  maxSpeed: 95
+  maxTorque: 400
   maxSteerAngle: 30
   maxBrakeTorque: 5000
   maxAntiRollForce: 5000
@@ -225,6 +226,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -372,6 +376,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -455,6 +462,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -490,7 +500,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8797015407546571286}
   - component: {fileID: 8797015407546571287}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: jeep_w1.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -548,7 +558,7 @@ WheelCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_Enabled: 1
   m_ProvidesContacts: 0
@@ -562,7 +572,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8797015407834439914}
   - component: {fileID: 8797015407834439913}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: jeep_w2.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -620,7 +630,7 @@ WheelCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_Enabled: 1
   m_ProvidesContacts: 0
@@ -682,6 +692,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -831,6 +844,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -897,7 +913,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8797015409000298673}
   - component: {fileID: 8797015409000298674}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: jeep_w1.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -955,7 +971,7 @@ WheelCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_Enabled: 1
   m_ProvidesContacts: 0
@@ -969,7 +985,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8797015409035528618}
   - component: {fileID: 8797015409035528619}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: jeep_w2.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1027,7 +1043,7 @@ WheelCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_Enabled: 1
   m_ProvidesContacts: 0
