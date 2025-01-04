@@ -4,5 +4,9 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Heuristic.unity
+    guid: 6c58f0c3c00dead49a08c985b75093d4
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

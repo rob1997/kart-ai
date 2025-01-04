@@ -10,6 +10,8 @@ namespace Core
     public class Driver : Agent
     {
         protected int Index { get; private set; }
+
+        public int Score { get; private set; } = - 1;
         
         protected Simulation Simulation { get; private set; }
 
@@ -48,11 +50,14 @@ namespace Core
             
             Motor.RigidBody.angularVelocity = Vector3.zero;
             
-            Index = 0;
+            Index = transform.GetSiblingIndex();
             
             transform.position = Simulation.EvaluatePosition(Index);
             
             Next();
+            
+            // look towards target
+            transform.rotation = Quaternion.LookRotation(Target - (float3) transform.position);
             
 #if UNITY_EDITOR
             _drawing = true;
@@ -105,9 +110,11 @@ namespace Core
             return false;
         }
         
-        private void Next()
+        protected virtual void Next()
         {
             Index++;
+            
+            Score++;
 
             Target = Simulation.EvaluatePosition(Index);
             

@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using Unity.MLAgents.Actuators;
 using UnityEngine;
 
@@ -5,6 +6,8 @@ namespace Core
 {
     public class Player : Driver
     {
+        [SerializeField] private Transform arrow;
+        
         private InputMaster _inputMaster;
 
         private bool _brake;
@@ -36,6 +39,24 @@ namespace Core
             actionsOut.ContinuousActions.Array[1] = direction;
 
             actionsOut.DiscreteActions.Array[0] = _brake ? 1 : 0;
+        }
+
+        private void Update()
+        {
+            float3 target = Target;
+            
+            float3 position = transform.position;
+            
+            target.y = position.y = 0;
+            
+            arrow.rotation = Quaternion.Slerp(arrow.rotation, Quaternion.LookRotation(target - position), 5f * Time.deltaTime);
+        }
+
+        protected override void Next()
+        {
+            base.Next();
+            
+            Simulation.Checkpoint(Index, true);
         }
 
         private void LateUpdate()

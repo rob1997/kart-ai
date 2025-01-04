@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: dd3838b8223e51b488c55db2735d498e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 209444
+  packageName: 'PROMETEO: Car Controller'
+  packageVersion: 1.2.2
+  assetPath: Assets/PROMETEO - Car Controller/Effects/Particle Systems/Materials/Sphere_Material.mat
+  uploadId: 513063

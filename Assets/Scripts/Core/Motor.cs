@@ -26,15 +26,39 @@ namespace Core
         //max anti-roll force/ force that stops car from rolling
         [SerializeField] private float maxAntiRollForce = 5000f;
 
+        [Space]
+        
+        [SerializeField] private AudioSource engineSound;
+        
+        [SerializeField] private AudioSource skidSound;
+
+        [Space]
+        
+        [SerializeField] private float engineVibrationAmplitude = .15f;
+        
+        [SerializeField] private float engineVibrationFrequency = .15f;
+        
+        [SerializeField] private Transform body;
+        
         //all wheels
         private WheelCollider[] _wheels;
-
+        
         private WheelCollider[] _frontWheels;
 
         private WheelCollider[] _backWheels;
 
         private Transform[] _wheelMeshContainers;
+        
+        private ParticleSystem[] _smokeEffects;
 
+        private float _initialEnginePitch;
+
+        private float3 _initialBodyPosition;
+        
+        private float _vibrationTime;
+
+        private bool _vibrateOut;
+        
         //car rigid-body
         public Rigidbody RigidBody { get; private set; }
 
@@ -49,18 +73,15 @@ namespace Core
 
             _wheels = GetComponentsInChildren<WheelCollider>();
 
-            _wheelMeshContainers = new Transform[_wheels.Length];
-
-            for (int i = 0; i < _wheelMeshContainers.Length; i++)
+            int length = _wheels.Length;
+            
+            _wheelMeshContainers = new Transform[length];
+            
+            for (int i = 0; i < length; i++)
             {
                 var wheel = _wheels[i];
 
-                if (wheel.transform.childCount == 0)
-                {
-                    continue;
-                }
-
-                _wheelMeshContainers[i] = _wheels[i].transform.GetChild(0);
+                _wheelMeshContainers[i] = wheel.transform.GetChild(0);
             }
 
             _frontWheels = _wheels.GetFrontWheels(centerOfMass)
@@ -70,6 +91,57 @@ namespace Core
             _backWheels = _wheels.GetBackWheels(centerOfMass)
                 .OrderBy(wheel => wheel.IsRightWheel(centerOfMass))
                 .ToArray();
+            
+            _smokeEffects = new ParticleSystem[_backWheels.Length];
+            
+            for (int i = 0; i < _backWheels.Length; i++)
+            {
+                WheelCollider wheel = _backWheels[i];
+                
+                _smokeEffects[i] = wheel.transform.GetComponentInChildren<ParticleSystem>();
+            }
+            
+            
+            _initialEnginePitch = engineSound.pitch;
+            
+            _initialBodyPosition = body.localPosition;
+        }
+
+        private void Update()
+        {
+            CheckForSkid();
+            
+            engineSound.pitch = _initialEnginePitch + (Mathf.Abs(RigidBody.linearVelocity.magnitude) / 25f);
+
+            _vibrationTime += Time.deltaTime;
+            
+            float normalizedTime = _vibrationTime / engineVibrationFrequency;
+            
+            float3 vibrationTarget = math.up() * engineVibrationAmplitude;
+            
+            if (_vibrateOut)
+            {
+                body.localPosition = math.lerp(_initialBodyPosition, _initialBodyPosition + vibrationTarget, normalizedTime);
+                
+                if (normalizedTime >= 1)
+                {
+                    _vibrateOut = false;
+
+                    _vibrationTime = 0;
+                }
+            }
+
+            else
+            {
+                body.localPosition = math.lerp(_initialBodyPosition + vibrationTarget, _initialBodyPosition, normalizedTime);
+                
+                if (normalizedTime >= 1)
+                {
+                    _vibrateOut = true;
+
+                    _vibrationTime = 0;
+                }
+            }
         }
 
         private void FixedUpdate()
@@ -116,6 +188,49 @@ namespace Core
             }
         }
         
+        private void CheckForSkid()
+        {
+            int numSkidding = 0;
+
+            for (int i = 0; i < _wheels.Length; i++)
+            {
+                WheelCollider wheel = _wheels[i];
+                
+                int index = Array.IndexOf(_backWheels, wheel);
+                
+                if (wheel.GetGroundHit(out WheelHit hit))
+                {
+                    if (math.abs(hit.forwardSlip) >= .4f || math.abs(hit.sidewaysSlip) >= .4f)
+                    {
+                        numSkidding++;
+
+                        if (numSkidding == 4 && !skidSound.isPlaying)
+                        {
+                            skidSound.Play();
+                        }
+
+                        if (index != - 1)
+                        {
+                            _smokeEffects[index].Play();
+                        }
+                    }
+
+                    else
+                    {
+                        if (index != - 1)
+                        {
+                            _smokeEffects[index].Stop();
+                        }
+                    }
+                }
+            }
+
+            if (numSkidding != 4 && skidSound.isPlaying)
+            {
+                skidSound.Stop();
+            }
+        }
+
         private float Torque()
         {
             float speed = math.length(RigidBody.linearVelocity);
