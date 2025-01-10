@@ -247,15 +247,13 @@ namespace Core
         }
 
         // Reset's the motor with new position and rotation
-        public void Setup(float3 position, quaternion rotation)
+        public void Setup(float3 position, Quaternion rotation)
         {
             RigidBody.linearVelocity = Vector3.zero;
             
             RigidBody.angularVelocity = Vector3.zero;
 
-            transform.position = position;
-            
-            transform.rotation = rotation;
+            transform.SetPositionAndRotation(position, rotation);
         }
         
         /// <summary>

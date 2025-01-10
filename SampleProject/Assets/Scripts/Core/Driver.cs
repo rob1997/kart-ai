@@ -53,12 +53,12 @@ namespace Core
             
             Index = transform.GetSiblingIndex();
             
-            float3 position = Simulation.EvaluatePosition(Index);
-            
             Next();
             
+            float3 position = Simulation.EvaluatePosition(Index - 1);
+            
             // look towards target
-            quaternion rotation = Quaternion.LookRotation(Target - (float3) transform.position);
+            Quaternion rotation = Quaternion.LookRotation(Target - position);
             
             Motor.Setup(position, rotation);
             

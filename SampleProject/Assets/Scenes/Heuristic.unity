@@ -2883,11 +2883,11 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 8238f9cb92f317f489275362a7e5e6b6, type: 2}
   groundRenderer: {fileID: 1386962413}
   checkpoints: 16
-  checkpoint: {fileID: 8714306675885296542, guid: 255d4c2a919bb984bb19f53fb9c5c449,
+  checkpointPrefab: {fileID: 8714306675885296542, guid: 255d4c2a919bb984bb19f53fb9c5c449,
     type: 3}
-  next: {fileID: 8714306674547209271}
-  entry: {fileID: 161458131}
-  container: {fileID: 731749077}
+  targetCheckpoint: {fileID: 8714306674547209271}
+  lapCheckpoint: {fileID: 161458131}
+  checkpointContainer: {fileID: 731749077}
   <ProximityPadding>k__BackingField: 4
   targetRadius: 0.5
 --- !u!1001 &1412592786
