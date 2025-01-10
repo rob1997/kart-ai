@@ -19,14 +19,19 @@ namespace Core
         
         protected float3 Target { get; private set; }
 
+        // right vector of the track at the current target
         private float3 _right;
         
+        // point on the right side of the track's current boundary
         private float3 _pointL;
         
+        // point on the left side of the track's current boundary
         private float3 _pointR;
 
+        // is the agent inside the track or not
         private bool _inTrack;
         
+        // which side of the boundary is the agent on
         private int _side;
         
         public override void Initialize()
@@ -44,20 +49,18 @@ namespace Core
         
         public override void OnEpisodeBegin()
         {
-            Simulation.Restart();
-            
-            Motor.RigidBody.linearVelocity = Vector3.zero;
-            
-            Motor.RigidBody.angularVelocity = Vector3.zero;
+            Simulation.Setup();
             
             Index = transform.GetSiblingIndex();
             
-            transform.position = Simulation.EvaluatePosition(Index);
+            float3 position = Simulation.EvaluatePosition(Index);
             
             Next();
             
             // look towards target
-            transform.rotation = Quaternion.LookRotation(Target - (float3) transform.position);
+            quaternion rotation = Quaternion.LookRotation(Target - (float3) transform.position);
+            
+            Motor.Setup(position, rotation);
             
 #if UNITY_EDITOR
             _drawing = true;
@@ -86,6 +89,7 @@ namespace Core
 
             float3 direction = position - target;
 
+            // which side of the boundary is the agent on
             int side = (int) math.cross(direction, _right).Normalize().y;
             
             if (_inTrack && side != _side)
@@ -94,20 +98,30 @@ namespace Core
                 
                 return true;
             }
-            
-            float3 directionL = position - _pointL;
-            
-            float3 directionR = position - _pointR;
-            
-            float angleL = Voronoi.Utils.Angle(_right, directionL);
-            
-            float angleR = Voronoi.Utils.Angle(- _right, directionR);
+
+            GetAngles(out float angleL, out float angleR);
 
             _inTrack = angleL < 90 && angleR < 90;
 
             _side = side;
             
             return false;
+        }
+
+        // Get angles between the agent and the left and right boundaries
+        private void GetAngles(out float angleL, out float angleR)
+        {
+            float3 position = transform.position;
+
+            position.y = 0;
+            
+            float3 directionL = position - _pointL;
+            
+            float3 directionR = position - _pointR;
+            
+            angleL = Voronoi.Utils.Angle(_right, directionL);
+            
+            angleR = Voronoi.Utils.Angle(- _right, directionR);
         }
         
         protected virtual void Next()
@@ -118,7 +132,7 @@ namespace Core
 
             Target = Simulation.EvaluatePosition(Index);
             
-            //Re-calculate proximity values
+            //Re-calculate cached values
             float3 forward = Simulation.EvaluatePosition(Index - 1) - Target;
 
             forward.y = 0;
@@ -140,29 +154,20 @@ namespace Core
 
         protected float Proximity()
         {
+            GetAngles(out float angleL, out float angleR);
+
             float3 position = transform.position;
 
             position.y = 0;
             
-            float3 directionL = position - _pointL;
-            
-            float3 directionR = position - _pointR;
-            
-            float angleL = Voronoi.Utils.Angle(_right, directionL);
-            
-            float angleR = Voronoi.Utils.Angle(- _right, directionR);
-
+            // both angles are acute, it means it's inside the bounds
             if (angleL < 90 && angleR < 90)
             {
-                return math.length(directionL) * math.sin(angleL * math.TORADIANS);
+                return math.length(position - _pointL) * math.sin(angleL * math.TORADIANS);
             }
 
-            if (angleL >= 90)
-            {
-                return math.distance(_pointL, position);
-            }
-            
-            return math.distance(_pointR, position);
+            // else if one of the angles is obtuse then proximity is calculated as the distance from edge of the obtuse side
+            return math.distance(angleL >= 90 ? _pointL : _pointR, position);
         }
         
 #if UNITY_EDITOR

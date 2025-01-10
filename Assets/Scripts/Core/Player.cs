@@ -7,6 +7,7 @@ namespace Core
     public class Player : Driver
     {
         [SerializeField] private Transform arrow;
+        [SerializeField] private float arrowRotationSpeed = 5f;
         
         private InputMaster _inputMaster;
 
@@ -49,14 +50,14 @@ namespace Core
             
             target.y = position.y = 0;
             
-            arrow.rotation = Quaternion.Slerp(arrow.rotation, Quaternion.LookRotation(target - position), 5f * Time.deltaTime);
+            arrow.rotation = Quaternion.Slerp(arrow.rotation, Quaternion.LookRotation(target - position), arrowRotationSpeed * Time.deltaTime);
         }
 
         protected override void Next()
         {
             base.Next();
             
-            Simulation.Checkpoint(Index, true);
+            Simulation.UpdateTargetCheckpoint(Index);
         }
 
         private void LateUpdate()

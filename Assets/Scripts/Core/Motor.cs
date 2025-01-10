@@ -111,39 +111,44 @@ namespace Core
         {
             CheckForSkid();
             
+            // rev sound
             engineSound.pitch = _initialEnginePitch + (Mathf.Abs(RigidBody.linearVelocity.magnitude) / 25f);
 
+            VibrateEffect();
+        }
+
+        // vibrate engine effect
+        // just move the body up and down
+        private void VibrateEffect()
+        {
             _vibrationTime += Time.deltaTime;
             
             float normalizedTime = _vibrationTime / engineVibrationFrequency;
             
             float3 vibrationTarget = math.up() * engineVibrationAmplitude;
             
+            float3 start = _initialBodyPosition;
+                
+            float3 end = _initialBodyPosition + vibrationTarget;
+                
             if (_vibrateOut)
             {
-                body.localPosition = math.lerp(_initialBodyPosition, _initialBodyPosition + vibrationTarget, normalizedTime);
-                
-                if (normalizedTime >= 1)
-                {
-                    _vibrateOut = false;
-
-                    _vibrationTime = 0;
-                }
+                body.localPosition = math.lerp(start, end, normalizedTime);
             }
 
             else
             {
-                body.localPosition = math.lerp(_initialBodyPosition + vibrationTarget, _initialBodyPosition, normalizedTime);
-                
-                if (normalizedTime >= 1)
-                {
-                    _vibrateOut = true;
+                body.localPosition = math.lerp(end, start, normalizedTime);
+            }
+            
+            if (normalizedTime >= 1)
+            {
+                _vibrateOut = !_vibrateOut;
 
-                    _vibrationTime = 0;
-                }
+                _vibrationTime = 0;   
             }
         }
-
+        
         private void FixedUpdate()
         {
             //anti-roll
@@ -241,6 +246,18 @@ namespace Core
             return math.lerp(maxTorque, 0, normalizedSpeed);
         }
 
+        // Reset's the motor with new position and rotation
+        public void Setup(float3 position, quaternion rotation)
+        {
+            RigidBody.linearVelocity = Vector3.zero;
+            
+            RigidBody.angularVelocity = Vector3.zero;
+
+            transform.position = position;
+            
+            transform.rotation = rotation;
+        }
+        
         /// <summary>
         /// anti-roll function that stops car from rolling
         /// </summary>

@@ -2,6 +2,7 @@ using Track;
 using Unity.Mathematics;
 using Unity.MLAgents;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Splines;
 using Random = UnityEngine.Random;
 
@@ -22,13 +23,15 @@ namespace Core
         
         [SerializeField] private int checkpoints = 25;
 
-        [SerializeField] private Transform checkpoint;
+        [SerializeField] private Transform checkpointPrefab;
         
-        [SerializeField] private Transform next;
+        [SerializeField] private Transform targetCheckpoint;
         
-        [SerializeField] private Transform entry;
+        [SerializeField] private Transform lapCheckpoint;
         
-        [SerializeField] private Transform container;
+        [SerializeField] private Transform checkpointContainer;
+        
+        [field: Space]
         
         [field: SerializeField] public float ProximityPadding { get; private set; } = 3f;
 
@@ -39,8 +42,6 @@ namespace Core
         private bool _initialized;
 
         private int _steps = - 1;
-        
-        public float DistanceBetweenCheckpoints { get; private set; }
         
         public void Initialize()
         {
@@ -54,8 +55,10 @@ namespace Core
             _initialized = true;
         }
 
-        public void Restart()
+        public void Setup()
         {
+            // used to only setup once in case there's multiple agents per simulation
+            // since it's being called OnEpisodeBegin of every Agent
             if (_steps == Academy.Instance.TotalStepCount)
             {
                 return;
@@ -68,6 +71,7 @@ namespace Core
                 // Day/night cycle
                 skyRenderer.sharedMaterial.mainTextureScale = new Vector2(Random.Range(0f, 2f), 1f);
                 
+                // random ground texture
                 groundRenderer.material = groundMats[Random.Range(0, groundMats.Length)];
 
                 for (int i = 0; i < checkpoints; i++)
@@ -83,8 +87,6 @@ namespace Core
                 _trackGenerator.GenerateSpline();
             }
 
-            DistanceBetweenCheckpoints = _trackGenerator.Spline.GetLength() / checkpoints;
-            
             _steps = Academy.Instance.TotalStepCount;
             
 #if UNITY_EDITOR
@@ -94,6 +96,11 @@ namespace Core
         
         public float3 EvaluatePosition(int index)
         {
+            while (index < 0)
+            {
+                index += checkpoints;
+            }
+            
             index %= checkpoints;
             
             float t = (float) index / checkpoints;
@@ -103,31 +110,35 @@ namespace Core
             return transform.TransformPoint(position);
         }
 
-        public void Checkpoint(int index, bool isTarget = false)
+        private void Checkpoint(int index)
         {
             float3 target = EvaluatePosition(index);
                 
             float3 forward = EvaluatePosition(index - 1) - target;
-
-            if (isTarget)
+            
+            if (index % checkpoints != 0)
             {
-                if (index % checkpoints != 0)
-                {
-                    next.SetPositionAndRotation(target, Quaternion.LookRotation(forward));
-                }
+                Instantiate(checkpointPrefab, target, Quaternion.LookRotation(forward), checkpointContainer);
             }
+
             else
             {
-                if (index == 0)
-                {
-                    entry.SetPositionAndRotation(target, Quaternion.LookRotation(forward));
-                }
-
-                else
-                {
-                    Instantiate(checkpoint, target, Quaternion.LookRotation(forward), container);
-                }
+                lapCheckpoint.SetPositionAndRotation(target, Quaternion.LookRotation(forward));
             }
+        }
+        
+        public void UpdateTargetCheckpoint(int index)
+        {
+            float3 target = EvaluatePosition(index);
+                
+            float3 forward = EvaluatePosition(index - 1) - target;
+            
+            if (index % checkpoints != 0)
+            {
+                targetCheckpoint.SetPositionAndRotation(target, Quaternion.LookRotation(forward));
+            }
+            
+            targetCheckpoint.gameObject.SetActive(index % checkpoints != 0);
         }
         
 #if UNITY_EDITOR

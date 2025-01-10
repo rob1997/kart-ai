@@ -15,6 +15,7 @@ namespace Core
         {
             base.OnEpisodeBegin();
 
+            // Reset proximity values
             EvaluateProximity();
             
             CacheProximity();
@@ -22,6 +23,7 @@ namespace Core
 
         public override void CollectObservations(VectorSensor sensor)
         {
+            // Re-Calculate Proximity
             EvaluateProximity();
             
             // 1 Observation
@@ -40,7 +42,7 @@ namespace Core
             sensor.AddObservation(LookDirection());
             
             // 1 Observation
-             sensor.AddObservation(TrackDirection());
+             sensor.AddObservation(DistanceFromTrack());
             
             // 1 Observation
             sensor.AddObservation(NextTurn());
@@ -58,39 +60,46 @@ namespace Core
 
             float reward = 0;
 
-            float proximityDelta = _lastProximity - _proximity;
+            // The difference between proximity to next checkpoint (target) within the last Academy step and the current proximity value
+            float changeInProximity = _lastProximity - _proximity;
 
             // Distance between checkpoints
-            float distance = Distance();
+            float distanceBetweenCheckpoints = DistanceBetweenCheckpoints();
             
-            // 0 - 1 value, increases as you get closer to the target
-            float proximityFactor = (distance - math.clamp(_proximity, 0f, distance)) / distance;
+            // 0 - 1 value, increases as you get closer to the target, 0 being the farthest (proximity == distance between checkpoints)
+            float proximityFactor = (distanceBetweenCheckpoints - math.clamp(_proximity, 0f, distanceBetweenCheckpoints)) / distanceBetweenCheckpoints;
 
             // Higher reward as you get closer to the target
-            reward += math.max(0f, proximityDelta * proximityFactor);
+            reward += math.max(0f, changeInProximity * proximityFactor);
             
-            float trackDirection = TrackDirection();
+            // 0 - 1 value, increases as you stay closer to the mid of the road/track
+            float distanceFromTrack = DistanceFromTrack();
             
-            reward += reward * math.clamp(trackDirection, 0, 1);
+            // the further the distance from the mid of the road the less reward
+            reward += reward * math.clamp(distanceFromTrack, 0, 1);
             
+            // 0 - 1 value, increases as you move forward (reverse == 0)
             float lookDirection = LookDirection();
 
             reward += reward * math.clamp(lookDirection, 0, 1);
 
-            // higher reward for faster velocity towards target
+            // higher reward for faster velocity moving towards target
             float speedFactor = (math.max(0, MovementDirection()) * Speed()) / Motor.MaxSpeed;
             
             reward += reward * math.clamp(speedFactor, 0, 1);
             
+            // if the checkpoint (target) is passed successfully and updated, add a reward
             if (CheckAndUpdateTarget())
             {
                 reward += 1;
                 
+                // update proximity based on new target
                 EvaluateProximity();
             }
             
             AddReward(reward);
             
+            // Cache the current proximity to target value as _lastProximity
             CacheProximity();
         }
 
@@ -118,7 +127,8 @@ namespace Core
             return math.length(Velocity());
         }
         
-        private float TrackDirection()
+        // direction from the main track (normalized distance from mid-road)
+        private float DistanceFromTrack()
         {
             float3 direction = (float3) transform.position - Target;
             
@@ -140,6 +150,7 @@ namespace Core
             return math.dot(velocity.Normalize(), forward.Normalize());
         }
         
+        // Is the agent moving towards the target
         private float MovementDirection()
         {
             float3 direction = Target - (float3) transform.position;
@@ -173,7 +184,8 @@ namespace Core
             return math.distance(current, next);
         }
         
-        private float Distance()
+        // Distance between checkpoints (target and previous target)
+        private float DistanceBetweenCheckpoints()
         {
             float3 current = Target;
             
