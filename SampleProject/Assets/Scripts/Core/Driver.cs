@@ -141,7 +141,7 @@ namespace Core
             
             _right = math.cross(forward, Simulation.transform.up);
 
-            _right = _right.Normalize() * (Simulation.TrackWidth + Simulation.ProximityPadding);
+            _right = _right.Normalize() * Simulation.TrackWidth;
             
             _pointR = Target + _right;
             

@@ -2,7 +2,6 @@ using Track;
 using Unity.Mathematics;
 using Unity.MLAgents;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Splines;
 using Random = UnityEngine.Random;
 
@@ -11,17 +10,20 @@ namespace Core
     [RequireComponent(typeof(TrackGenerator))]
     public class Simulation : MonoBehaviour
     {
-        [SerializeField] private bool inference;
+        [SerializeField, Tooltip("Is the simulation running in inference mode or training mode?")]
+        private bool inference;
         
         [SerializeField] private MeshRenderer skyRenderer;
         
-        [SerializeField] private Material[] groundMats;
+        [SerializeField, Tooltip("Ground materials that'll be selected randomly on inference mode")]
+        private Material[] groundMats;
         
         [SerializeField] private MeshRenderer groundRenderer;
         
         [Space]
         
-        [SerializeField] private int checkpoints = 25;
+        [SerializeField, Tooltip("Number of checkpoints to be generated for the track.")]
+        private int checkpoints = 25;
 
         [SerializeField] private Transform checkpointPrefab;
         
@@ -33,9 +35,10 @@ namespace Core
         
         [field: Space]
         
-        [field: SerializeField] public float ProximityPadding { get; private set; } = 3f;
+        [SerializeField, Tooltip("Padding to be added on each side to the width of the track.")]
+        private float proximityPadding = 3f;
 
-        public float TrackWidth => _trackGenerator.Width;
+        public float TrackWidth => _trackGenerator.Width + proximityPadding;
 
         private TrackGenerator _trackGenerator;
 

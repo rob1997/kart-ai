@@ -6,8 +6,11 @@ namespace Core
 {
     public class Player : Driver
     {
-        [SerializeField] private Transform arrow;
-        [SerializeField] private float arrowRotationSpeed = 5f;
+        [SerializeField, Tooltip("The arrow that points towards the target.")]
+        private Transform arrow;
+        
+        [SerializeField, Tooltip("The speed at which the arrow rotates towards the target.")]
+        private float arrowRotationSpeed = 5f;
         
         private InputMaster _inputMaster;
 

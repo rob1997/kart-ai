@@ -8,23 +8,24 @@ namespace Core
     [RequireComponent(typeof(Rigidbody))]
     public class Motor : MonoBehaviour
     {
-        [SerializeField] private Transform centerOfMass;
+        [SerializeField, Tooltip("The vehicle's center of mass position.")]
+        private Transform centerOfMass;
 
         [Space]
 
-        [SerializeField] private float maxSpeed = 20f;
+        [SerializeField] private float maxSpeed = 95f;
         
-        //maximum wheel rotation force
-        [SerializeField] private float maxTorque = 200f;
+        [SerializeField, Tooltip("Maximum wheel rotation force. kind of like acceleration speed.")]
+        private float maxTorque = 400f;
 
-        //max steer angle of front wheels
-        [SerializeField] private float maxSteerAngle = 30f;
+        [SerializeField, Tooltip("Max steer angle of front wheels.")]
+        private float maxSteerAngle = 30f;
 
-        //max brake torque
-        [SerializeField] private float maxBrakeTorque = 5000f;
+        [SerializeField, Tooltip("Maximum force for breaking, the higher this value the faster the car stops.")]
+        private float maxBrakeTorque = 5000f;
 
-        //max anti-roll force/ force that stops car from rolling
-        [SerializeField] private float maxAntiRollForce = 5000f;
+        [SerializeField, Tooltip("Maximum force that stops car from rolling.")]
+        private float maxAntiRollForce = 5000f;
 
         [Space]
         
@@ -34,11 +35,14 @@ namespace Core
 
         [Space]
         
-        [SerializeField] private float engineVibrationAmplitude = .15f;
+        [SerializeField, Tooltip("The amplitude/magnitude of the engine vibration effect.")]
+        private float engineVibrationAmplitude = .15f;
         
-        [SerializeField] private float engineVibrationFrequency = .15f;
+        [SerializeField, Tooltip("The frequency/speed of the engine vibration effect.")]
+        private float engineVibrationFrequency = .15f;
         
-        [SerializeField] private Transform body;
+        [SerializeField, Tooltip("Body of the car that'll vibrate. Usually it's the MeshRenderer of the body without the tires, make sure it's a child of the car's actual body (RigidBody).")]
+        private Transform body;
         
         //all wheels
         private WheelCollider[] _wheels;
